@@ -22,11 +22,13 @@
   "homepage": "https://gitlab.com/fluxsauce/rock-paper-scissors#README",
   "dependencies": {
     "config": "^1.29.4",
+    "connect-session-knex": "^1.4.0",
     "db-migrate": "^0.10.5",
     "db-migrate-sqlite3": "^0.2.1",
     "express": "^4.16.2",
     "express-list-endpoints": "^3.0.1",
     "express-request-id": "^1.4.0",
+    "express-session": "^1.15.6",
     "knex": "0.14.2",
     "lodash": "^4.17.5",
     "moniker": "^0.1.2",
