@@ -1,10 +1,15 @@
 {
   "name": "rock-paper-scissors",
   "version": "1.0.0",
+  "engines": {
+    "node": ">=8"
+  },
   "description": "Rock, Paper, Scissors",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "nyc --reporter=text --reporter=html --check-coverage --lines=100 --statements=100 mocha ./test",
+    "pjv": "pjv -r -w",
+    "eslint": "eslint ."
   },
   "repository": {
     "type": "git",
@@ -15,6 +20,7 @@
     "game"
   ],
   "author": "Jon Peck <jpeck@fluxsauce.com>",
+  "contributors": [],
   "license": "ISC",
   "bugs": {
     "url": "https://gitlab.com/fluxsauce/rock-paper-scissors/issues"
@@ -23,13 +29,12 @@
   "dependencies": {
     "config": "^1.29.4",
     "connect-session-knex": "^1.4.0",
-    "db-migrate": "^0.10.5",
-    "db-migrate-sqlite3": "^0.2.1",
     "express": "^4.16.2",
     "express-list-endpoints": "^3.0.1",
     "express-request-id": "^1.4.0",
     "express-session": "^1.15.6",
-    "knex": "0.14.2",
+    "joi": "^13.1.2",
+    "knex": "^0.14.4",
     "lodash": "^4.17.5",
     "moniker": "^0.1.2",
     "morgan": "^1.9.0",
@@ -37,11 +42,17 @@
     "winston": "^2.4.0"
   },
   "devDependencies": {
+    "chai": "^4.1.2",
     "eslint": "^4.17.0",
     "eslint-config-airbnb-base": "^12.1.0",
-    "eslint-plugin-import": "^2.8.0"
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-mocha": "^4.11.0",
+    "mocha": "^5.0.1",
+    "nyc": "^11.4.1",
+    "package-json-validator": "^0.6.3"
   },
   "eslintConfig": {
     "extends": "airbnb-base"
   }
 }
+

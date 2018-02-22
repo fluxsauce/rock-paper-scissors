@@ -1,0 +1,26 @@
+image: node:latest
+
+cache:
+  paths:
+  - node_modules/
+
+stages:
+  - build
+  - lint
+  - test
+
+job_build:
+  stage: build
+  script:
+    - npm install
+
+job_lint:
+  stage: lint
+  script:
+    - npm run pjv --silent
+    - npm run eslint --silent
+
+job_test:
+  stage: test
+  script:
+    - npm test
