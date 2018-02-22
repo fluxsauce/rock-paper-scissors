@@ -35,8 +35,8 @@ app.use(morgan((tokens, req, res) => [
   tokens['response-time'](req, res), 'ms',
 ].join(' '), { stream: { write: message => logger.info(message.trim()) } }));
 
-app.use(require('./router'));
-
 app.route('/ping').get((req, res) => res.send('PONG'));
+
+app.use(require('./router'));
 
 module.exports = app;

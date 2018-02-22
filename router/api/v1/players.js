@@ -6,9 +6,10 @@ const router = new express.Router();
 
 router.route('/')
   .post((request, response) => {
-    new Player({})
+    new Player(request.body)
       .create()
-      .then(result => response.send(result));
+      .then(result => response.send(result))
+      .catch(error => response.status(500).send({ error: error.message }));
   });
 
 router.param('player_id', (request, response, next, id) => {

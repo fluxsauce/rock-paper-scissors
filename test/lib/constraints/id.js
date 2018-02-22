@@ -1,5 +1,5 @@
 const chai = require('chai');
-const id = require('../../../../server/lib/constraints/id');
+const id = require('../../../lib/constraints/id');
 
 const should = chai.should();
 

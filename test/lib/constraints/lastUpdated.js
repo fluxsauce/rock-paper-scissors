@@ -1,5 +1,5 @@
 const chai = require('chai');
-const lastUpdated = require('../../../../server/lib/constraints/lastUpdated');
+const lastUpdated = require('../../../lib/constraints/lastUpdated');
 
 const should = chai.should();
 
