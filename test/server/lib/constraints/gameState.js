@@ -16,7 +16,6 @@ describe('server/lib/constraints/gameState.js', function () {
   it('should reject invalid input', function (done) {
     const result = gameState.validate('pants');
 
-    result.value.should.equal('pants');
     result.error.should.be.an('error');
     result.error.message.should.include('"value" must be one of');
 
