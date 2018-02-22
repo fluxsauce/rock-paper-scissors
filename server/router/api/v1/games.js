@@ -8,7 +8,8 @@ router.route('/')
   .post((request, response) => {
     new Game(request.body)
       .create()
-      .then(result => response.send(result));
+      .then(result => response.send(result))
+      .catch(error => response.status(500).send({ error: error.message }));
   });
 
 router.param('game_id', (request, response, next, id) => {

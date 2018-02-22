@@ -15,15 +15,6 @@ describe('server/lib/constraints/lastUpdated.js', function () {
     done();
   });
 
-  it('should provide a sane default if no input is given', function (done) {
-    const result = lastUpdated.validate();
-
-    result.value.should.be.a('date');
-    should.not.exist(result.error);
-
-    done();
-  });
-
   it('should reject invalid input', function (done) {
     const result = lastUpdated.validate('pants');
 

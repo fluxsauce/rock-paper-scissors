@@ -1,3 +1,4 @@
+const GameConstraint = require('./constraints/Game');
 const isNull = require('lodash/isNull');
 const logger = require('./logger');
 const knex = require('./knex');
@@ -5,9 +6,6 @@ const merge = require('lodash/merge');
 const Referee = require('./Referee');
 
 const referee = new Referee();
-referee.train('rock', 'scissors');
-referee.train('paper', 'rock');
-referee.train('scissors', 'paper');
 
 module.exports = class {
   constructor(input) {
@@ -22,9 +20,10 @@ module.exports = class {
   }
 
   create() {
-    return knex
-      .insert(this)
-      .into('games')
+    return GameConstraint.validate(this)
+      .then(validated => knex
+        .insert(validated)
+        .into('games'))
       .then((result) => {
         this.id = result.pop();
         return this;
@@ -37,9 +36,6 @@ module.exports = class {
       .select()
       .then((result) => {
         merge(this, result.pop());
-        if (!(this.lastUpdated instanceof Date)) {
-          this.lastUpdated = new Date(this.lastUpdated);
-        }
         return this;
       });
   }
@@ -47,9 +43,11 @@ module.exports = class {
   update(input) {
     merge(this, input);
     this.lastUpdated = new Date();
-    return knex('games')
-      .where({ id: this.id })
-      .update(input)
+
+    return GameConstraint.validate(this)
+      .then(validated => knex('games')
+        .where({ id: this.id })
+        .update(validated))
       .then(() => this);
   }
 

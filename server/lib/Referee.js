@@ -1,6 +1,10 @@
 module.exports = class {
   constructor() {
     this.training = {};
+
+    this.train('rock', 'scissors');
+    this.train('paper', 'rock');
+    this.train('scissors', 'paper');
   }
 
   judge(choice1, choice2) {
