@@ -1,5 +1,5 @@
 const express = require('express');
-const Game = require('../../../lib/Game');
+const Game = require('../../../../../lib/Game');
 const isEmpty = require('lodash/isEmpty');
 
 const router = new express.Router();

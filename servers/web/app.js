@@ -1,9 +1,9 @@
 const config = require('config');
 const express = require('express');
-const knex = require('./lib/knex');
+const knex = require('../../lib/knex');
 const requestId = require('express-request-id')();
 const morgan = require('morgan');
-const logger = require('./lib/logger');
+const logger = require('../../lib/logger');
 const path = require('path');
 const session = require('express-session');
 const KnexSessionStore = require('connect-session-knex')(session);
@@ -37,6 +37,6 @@ app.use(morgan((tokens, req, res) => [
 
 app.route('/ping').get((req, res) => res.send('PONG'));
 
-app.use(require('./router'));
+app.use(require('./router/index'));
 
 module.exports = app;
