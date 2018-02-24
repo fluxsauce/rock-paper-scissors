@@ -1,5 +1,4 @@
 {
-  "port": 6000,
   "logger": {
     "format": "tiny",
     "level": "debug"
@@ -14,10 +13,13 @@
   "session": {
     "secret": "darth jarjar"
   },
+  "web": {
+    "port": 5000
+  },
   "games": {
-    "port": 6005
+    "port": 5005
   },
   "players": {
-    "port": 6010
+    "port": 5010
   }
 }

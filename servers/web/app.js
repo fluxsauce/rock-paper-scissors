@@ -13,8 +13,9 @@ const app = express();
 app.set('x-powered-by', false);
 app.set('etag', false);
 
+app.use(express.static(path.join(__dirname, './public')));
+
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../public')));
 app.use(requestId);
 
 app.use(session({
@@ -34,6 +35,9 @@ app.use(morgan((tokens, req, res) => [
   tokens.res(req, res, 'content-length'), '-',
   tokens['response-time'](req, res), 'ms',
 ].join(' '), { stream: { write: message => logger.info(message.trim()) } }));
+
+app.set('views', path.join(__dirname, 'views'));
+app.set('view engine', 'pug');
 
 app.route('/ping').get((req, res) => res.send('PONG'));
 

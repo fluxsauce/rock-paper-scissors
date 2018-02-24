@@ -1,0 +1,8 @@
+extends layout.pug
+
+block content
+  h1 Rock, Paper, Scissors
+  h2 Available Games
+    ul
+      each game in games
+        li= game.id + ' - ' + game.state
