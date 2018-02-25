@@ -1,0 +1,29 @@
+extends layout.pug
+include choice
+
+block content
+  h1 Rock, Paper, Scissors
+  h2 Game ##{game.id}
+
+  table
+    thead
+      tr
+        th Player ID
+        th Player Name
+        th Player Choice
+    tbody
+      tr
+        td #{game.players[game.player1id].id}
+        td #{game.players[game.player1id].name}
+        td
+          +choice(game.player1choice)
+      tr
+        td #{game.players[game.player2id].id}
+        td #{game.players[game.player2id].name}
+        td
+          +choice(game.player2choice)
+
+  div Outcome: #{game.state}
+  div Winner: #{game.players[game.playerWinnerId].name}
+
+  a(href='/') Back

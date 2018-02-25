@@ -5,4 +5,5 @@ block content
   h2 Available Games
     ul
       each game in games
-        li= game.id + ' - ' + game.state
+        li
+          a(href='/games/' + game.id) #{game.id} - #{game.state}
