@@ -1,4 +1,4 @@
-/* eslint-disable global-require */
+/* eslint-disable global-require,no-console */
 
 const endpoints = require('express-list-endpoints');
 const knex = require('./lib/knex');

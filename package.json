@@ -58,6 +58,9 @@
     "package-json-validator": "^0.6.3"
   },
   "eslintConfig": {
-    "extends": "airbnb-base"
+    "extends": "airbnb-base",
+    "rules": {
+      "no-param-reassign": "off"
+    }
   }
 }
