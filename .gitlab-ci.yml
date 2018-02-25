@@ -1,22 +1,17 @@
 image: node:latest
 
-stages:
-  - build
-  - lint
-  - test
+before_script:
+  - npm install
 
-job_build:
-  stage: build
-  script:
-    - npm install
+cache:
+  paths:
+    - node_modules/
 
-job_lint:
-  stage: lint
+test:lint:
   script:
     - npm run pjv --silent
     - npm run eslint --silent
 
-job_test:
-  stage: test
+test:node:
   script:
     - npm test
