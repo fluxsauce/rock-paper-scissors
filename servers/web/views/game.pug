@@ -2,28 +2,30 @@ extends layout.pug
 include choice
 
 block content
-  h1 Rock, Paper, Scissors
+  p(class='lead') Rules: #{rules.join(', ')}.
+
   h2 Game ##{game.id}
 
-  table
+  table(class='table')
     thead
       tr
-        th Player ID
-        th Player Name
-        th Player Choice
+        th(scope='col') Player ID
+        th(scope='col') Player Name
+        th(scope='col') Player Choice
     tbody
-      tr
-        td #{game.players[game.player1id].id}
+      tr(class=game.playerWinnerId && game.playerWinnerId === game.player1id ? 'table-success' : '')
+        th(scope='col') #{game.players[game.player1id].id}
         td #{game.players[game.player1id].name}
         td
           +choice(game.player1choice)
-      tr
+      tr(class=game.playerWinnerId && game.playerWinnerId === game.player2id ? 'table-success' : '')
         td #{game.players[game.player2id].id}
         td #{game.players[game.player2id].name}
         td
           +choice(game.player2choice)
 
-  div Outcome: #{game.state}
-  div Winner: #{game.players[game.playerWinnerId].name}
-
-  a(href='/') Back
+  dl(class='row')
+    dt(class='col-sm-3') Outcome
+    dd(class='col-sm-9') #{game.state}
+    dt(class='col-sm-3') Winner
+    dd(class='col-sm-9') #{game.players[game.playerWinnerId].name}

@@ -14,7 +14,11 @@ router.get('/', (req, res) => {
   request(`http://localhost:${config.get('games.port')}/api/v1/games`, options, (error, response, body) => {
     try {
       const games = JSON.parse(body);
+      console.log(games);
       res.render('index', {
+        messages: [
+          { level: 'danger', body: 'dang it' },
+        ],
         games,
       });
     } catch (e) {

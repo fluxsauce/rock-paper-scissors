@@ -1,9 +1,11 @@
 const config = require('config');
 const express = require('express');
 const isEmpty = require('lodash/isEmpty');
-const httpClient = require('../../../../lib/httpClient');
+const httpClient = require('../../../lib/httpClient');
+const Referee = require('../../../lib/Referee');
 const toInteger = require('lodash/toInteger');
 
+const referee = new Referee();
 const router = new express.Router();
 
 router.param('game_id', (request, response, next, id) => {
@@ -15,6 +17,7 @@ router.param('game_id', (request, response, next, id) => {
     .then((game) => {
       game.players = {};
 
+      // @todo: abstract this stuff out
       if (toInteger(game.player1id) > 0) {
         const playerOptions = {
           uri: `http://localhost:${config.get('players.port')}/api/v1/players/${game.player1id}`,
@@ -56,6 +59,7 @@ router.route('/:game_id')
     }
     return res.render('game', {
       game: req.game,
+      rules: referee.rules(),
     });
   });
 

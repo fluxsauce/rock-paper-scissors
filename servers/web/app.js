@@ -14,6 +14,10 @@ app.set('x-powered-by', false);
 app.set('etag', false);
 
 app.use(express.static(path.join(__dirname, './public')));
+app.use('/bootstrap/js', express.static('./node_modules/bootstrap/dist/js'));
+app.use('/jquery/js', express.static('./node_modules/jquery/dist'));
+app.use('/popper/js', express.static('./node_modules/popper.js/dist/umd'));
+app.use('/bootstrap/css', express.static('./node_modules/bootstrap/dist/css'));
 
 app.use(express.json());
 app.use(requestId);

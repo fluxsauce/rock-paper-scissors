@@ -1,9 +1,11 @@
 extends layout.pug
 
 block content
-  h1 Rock, Paper, Scissors
-  h2 Available Games
-    ul
+  p(class='lead')
+    a(href='#',class='btn btn-lg btn-secondary') Start new
+
+  if games.length > 0
+    h2 Available Games
+    div(class='list-group')
       each game in games
-        li
-          a(href='/games/' + game.id) #{game.id} - #{game.state}
+        a(class='list-group-item list-group-item-action', href='/games/' + game.id) ##{game.id} - #{game.state}

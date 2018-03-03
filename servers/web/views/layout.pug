@@ -1,7 +1,35 @@
 doctype html
-html
+html(lang='en')
   head
     meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+    meta(name='description', content='A Phenomenal Game')
+    meta(name='author', content='Jon Peck')
+    link(rel='icon', href='/favicon.ico')
     title Rock, Paper, Scissors
-  body
-    block content
+    link(href='/bootstrap/css/bootstrap.css', rel='stylesheet')
+    link(href='/css/cover.css', rel='stylesheet')
+
+  body(class='')
+    div(class='cover-container d-flex h-100 p-3 mx-auto flex-column')
+      header(class='masthead mb-auto')
+        div(class='inner')
+          h3(class='masthead-brand') Rock, Paper, Scissors
+          nav(class='nav nav-masthead justify-content-center')
+            if game
+              a(class='nav-link active', href='/games/' + game.id) Game #{game.id}
+            a(class='nav-link ' + (game ? '' : 'active'), href='/') Home
+
+      main(class='inner cover', role='main')
+        if messages && messages.length > 0
+          each message in messages
+            div(class='alert alert-' + message.level , role='alert') #{message.body}
+
+        block content
+
+      footer(class='mastfoot mt-auto')
+        div(class='inner')
+          p Node.js: Debugging and Performance Tuning, by Jon Peck
+        script(src='/jquery/js/jquery.min.js')
+        script(src='/popper/js/popper.js')
+        script(src='/bootstrap/js/bootstrap.js')
