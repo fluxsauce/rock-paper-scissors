@@ -1,3 +1,4 @@
+const compression = require('compression');
 const config = require('config');
 const express = require('express');
 const knex = require('../../lib/knex');
@@ -11,13 +12,18 @@ const KnexSessionStore = require('connect-session-knex')(session);
 const app = express();
 
 app.set('x-powered-by', false);
-app.set('etag', false);
 
-app.use(express.static(path.join(__dirname, './public')));
-app.use('/bootstrap/js', express.static('./node_modules/bootstrap/dist/js'));
-app.use('/jquery/js', express.static('./node_modules/jquery/dist'));
-app.use('/popper/js', express.static('./node_modules/popper.js/dist/umd'));
-app.use('/bootstrap/css', express.static('./node_modules/bootstrap/dist/css'));
+app.use(compression());
+
+app.use(express.json());
+
+const staticConfig = { maxAge: '30d' };
+
+app.use(express.static(path.join(__dirname, 'public'), staticConfig));
+app.use('/bootstrap/css', express.static('./node_modules/bootstrap/dist/css', staticConfig));
+app.use('/bootstrap/js', express.static('./node_modules/bootstrap/dist/js', staticConfig));
+app.use('/jquery/js', express.static('./node_modules/jquery/dist', staticConfig));
+app.use('/popper/js', express.static('./node_modules/popper.js/dist/umd', staticConfig));
 
 app.use(express.json());
 app.use(requestId);

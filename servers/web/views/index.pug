@@ -1,12 +1,14 @@
 extends layout.pug
 
 block content
-  if games.length > 0
-    div(class='available')
-      h2 Available Games
+  div(class='available')
+    h2 Available Games
+    if games.length > 0
       div(class='list-group')
         each game in games
           a(class='list-group-item list-group-item-action', href='/games/' + game.id) ##{game.id} - #{game.state}
+    else
+      p None... yet!
 
   p(class='lead float-right')
     a(href='#',class='btn btn-lg btn-secondary') Start new

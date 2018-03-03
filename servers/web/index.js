@@ -3,7 +3,8 @@ const config = require('config');
 const app = require('./app');
 const logger = require('../../lib/logger');
 
-const server = http.createServer(app);
+const port = config.get('web.port');
 
-server.listen(config.get('web.port'));
-server.on('listening', () => logger.info(`HTTP server listening on port ${config.get('web.port')}`));
+http.createServer(app)
+  .listen(port)
+  .on('listening', () => logger.info(`HTTP server listening on port ${port}`));

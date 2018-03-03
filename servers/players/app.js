@@ -11,7 +11,6 @@ const KnexSessionStore = require('connect-session-knex')(session);
 const app = express();
 
 app.set('x-powered-by', false);
-app.set('etag', false);
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));

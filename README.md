@@ -9,7 +9,7 @@ docker-compose up -d
 # Create the Schema.
 ./node_modules/.bin/knex migrate:latest
 # Start PM2
-./node_mobules/.bin/pm2 start ./pm2.config.js
+./node_modules/.bin/pm2 start ./pm2.config.js
 ```
 
 ## Manual
