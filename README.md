@@ -4,6 +4,8 @@
 
 ```bash
 npm i
+# Database.
+docker-compose up -d
 # Create the Schema.
 ./node_modules/.bin/knex migrate:latest
 ```

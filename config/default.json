@@ -4,11 +4,16 @@
     "level": "debug"
   },
   "database": {
-    "client": "sqlite3",
+    "client": "mysql",
     "connection": {
-      "filename": "./database.sqlite"
+      "host": "127.0.0.1",
+      "port": "33306",
+      "user": "root",
+      "database": "rps"
     },
-    "useNullAsDefault": true
+    "migrations": {
+      "tableName": "_knex_migrations"
+    }
   },
   "session": {
     "secret": "darth jarjar"
