@@ -1,6 +1,7 @@
 const config = require('config');
 const express = require('express');
 const isEmpty = require('lodash/isEmpty');
+const isNull = require('lodash/isNull');
 const httpClient = require('../../../lib/httpClient');
 const Referee = require('../../../lib/Referee');
 const toInteger = require('lodash/toInteger');
@@ -13,7 +14,7 @@ router.param('game_id', (request, response, next, id) => {
     uri: `http://localhost:${config.get('games.port')}/api/v1/games/${id}`,
     method: 'GET',
   };
-  httpClient(options, request.id)
+  return httpClient(options, request.id)
     .then((game) => {
       game.players = {};
 
@@ -47,7 +48,7 @@ router.param('game_id', (request, response, next, id) => {
     })
     .then((game) => {
       request.game = game;
-      next();
+      return next();
     })
     .catch(error => response.status(500).send(error.message));
 });
@@ -68,14 +69,68 @@ router.route('/')
   });
 
 router.route('/:game_id')
-  .get((req, res) => {
-    if (isEmpty(req.game)) {
-      return res.sendStatus(404);
+  .get((request, response) => {
+    if (isEmpty(request.game)) {
+      return response.sendStatus(404);
     }
-    return res.render('game', {
-      game: req.game,
+    return response.render('game', {
+      viewerPlayerId: request.session.playerId,
+      game: request.game,
       rules: referee.rules(),
     });
+  });
+
+router.route('/:game_id/choice')
+  .post((request, response) => {
+    if (isEmpty(request.game)) {
+      return response.sendStatus(404);
+    }
+    if (request.body.choice) {
+      const body = {};
+
+      // Determine which player you are.
+      // @todo do this in a less horrible way
+      if (request.session.playerId === request.game.player1id) {
+        body.player1choice = request.body.choice;
+      } else if (request.session.playerId === request.game.player2id) {
+        body.player2choice = request.body.choice;
+      }
+
+      if (!isEmpty(body)) {
+        const options = {
+          uri: `http://localhost:${config.get('games.port')}/api/v1/games/${request.game.id}`,
+          method: 'PATCH',
+          body,
+        };
+        return httpClient(options, request.id)
+          .then((game) => {
+            response.redirect(`/games/${game.id}`);
+          });
+      }
+      return response.status(400).send('what');
+    }
+    return response.status(500).send('nope');
+  });
+
+router.route('/:game_id/join')
+  .post((request, response) => {
+    if (isEmpty(request.game)) {
+      return response.sendStatus(404);
+    }
+    if (isNull(request.game.player2id)) {
+      const options = {
+        uri: `http://localhost:${config.get('games.port')}/api/v1/games/${request.game.id}`,
+        method: 'PATCH',
+        body: {
+          player2id: request.session.playerId,
+        },
+      };
+      return httpClient(options, request.id)
+        .then((game) => {
+          response.redirect(`/games/${game.id}`);
+        });
+    }
+    return response.sendStatus(500);
   });
 
 module.exports = router;

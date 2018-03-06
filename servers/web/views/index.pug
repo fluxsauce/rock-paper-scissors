@@ -6,10 +6,17 @@ block content
     if games.length > 0
       div(class='list-group')
         each game in games
-          a(class='list-group-item list-group-item-action', href='/games/' + game.id) ##{game.id} - #{game.state}
+          a(class='list-group-item list-group-item-action flex-column align-items-start', href='/games/' + game.id)
+            div.d-flex.w-100.justify-content-between
+              h5.mb1 Game ##{game.id}
+              small
+                | #{game.state}
+                if (game.playerWinnerId)
+                  |  - Player ##{game.playerWinnerId} won!
+            p.mb1 Player #{game.player1id ? game.player1id : 'TBD'} vs. Player #{game.player2id ? game.player2id : 'TBD'}
+
     else
       p None... yet!
 
-  p(class='lead float-right')
-    form(method='POST' action='/games')
-      button.btn.btn-lg.btn-secondary(type='submit') Start new
+  form(method='POST' action='/games')
+    button.btn.btn-lg.btn-secondary.float-right(type='submit') Start new

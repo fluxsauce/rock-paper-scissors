@@ -14,9 +14,13 @@ block content
         th(scope='col') Player Choice
     tbody
       if game.player1id
-        +player(game.id, game.playerWinnerId, game.player1id, game.players[game.player1id].name, game.player1choice)
-      if game.player2Id
-        +player(game.id, game.playerWinnerId, game.player2id, game.players[game.player2id].name, game.player2choice)
+        +player(game.id, game.playerWinnerId, game.player1id, game.players[game.player1id].name, game.player1choice, viewerPlayerId)
+      if game.player2id
+        +player(game.id, game.playerWinnerId, game.player2id, game.players[game.player2id].name, game.player2choice, viewerPlayerId)
+
+  if !game.player2id && viewerPlayerId !== game.player1id
+    form(method='POST' action='/games/' + game.id + '/join')
+      button.btn.btn-lg.btn-secondary.float-right(type='submit') Join
 
   dl(class='row')
     dt(class='col-sm-3') Outcome

@@ -1,4 +1,3 @@
-const compression = require('compression');
 const config = require('config');
 const express = require('express');
 const knex = require('../../lib/knex');

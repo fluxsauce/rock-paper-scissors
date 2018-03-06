@@ -17,6 +17,9 @@ app.set('x-powered-by', false);
 app.use(compression());
 
 app.use(express.json());
+app.use(express.urlencoded({
+  extended: true,
+}));
 
 const staticConfig = { maxAge: '30d' };
 
@@ -26,7 +29,6 @@ app.use('/bootstrap/js', express.static('./node_modules/bootstrap/dist/js', stat
 app.use('/jquery/js', express.static('./node_modules/jquery/dist', staticConfig));
 app.use('/popper/js', express.static('./node_modules/popper.js/dist/umd', staticConfig));
 
-app.use(express.json());
 app.use(requestId);
 
 app.use(session({
