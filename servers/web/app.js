@@ -1,6 +1,7 @@
 const compression = require('compression');
 const config = require('config');
 const express = require('express');
+const httpClient = require('../../lib/httpClient');
 const knex = require('../../lib/knex');
 const requestId = require('express-request-id')();
 const morgan = require('morgan');
@@ -32,13 +33,30 @@ app.use(session({
   store: new KnexSessionStore({ knex }),
   secret: config.get('session.secret'),
   cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 },
-  resave: false,
-  saveUninitialized: false,
+  resave: true,
+  saveUninitialized: true,
 }));
 
+app.use((request, response, next) => {
+  if (request.session.playerId) {
+    return next();
+  }
+  const options = {
+    uri: `http://localhost:${config.get('players.port')}/api/v1/players`,
+    method: 'POST',
+  };
+  return httpClient(options, request.id)
+    .then((player) => {
+      request.session.playerId = player.id;
+      request.session.playerName = player.name;
+      return next();
+    });
+});
+
 app.use(morgan((tokens, req, res) => [
-  req.id,
-  req.session.id,
+  // req.id,
+  // req.session.id,
+  req.session.playerName,
   tokens.method(req, res),
   tokens.url(req, res),
   tokens.status(req, res),

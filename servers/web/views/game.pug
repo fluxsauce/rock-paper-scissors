@@ -1,5 +1,5 @@
 extends layout.pug
-include choice
+include game/player
 
 block content
   p(class='lead') Rules: #{rules.join(', ')}.
@@ -13,19 +13,14 @@ block content
         th(scope='col') Player Name
         th(scope='col') Player Choice
     tbody
-      tr(class=game.playerWinnerId && game.playerWinnerId === game.player1id ? 'table-success' : '')
-        th(scope='col') #{game.players[game.player1id].id}
-        td #{game.players[game.player1id].name}
-        td
-          +choice(game.player1choice)
-      tr(class=game.playerWinnerId && game.playerWinnerId === game.player2id ? 'table-success' : '')
-        td #{game.players[game.player2id].id}
-        td #{game.players[game.player2id].name}
-        td
-          +choice(game.player2choice)
+      if game.player1id
+        +player(game.id, game.playerWinnerId, game.player1id, game.players[game.player1id].name, game.player1choice)
+      if game.player2Id
+        +player(game.id, game.playerWinnerId, game.player2id, game.players[game.player2id].name, game.player2choice)
 
   dl(class='row')
     dt(class='col-sm-3') Outcome
     dd(class='col-sm-9') #{game.state}
-    dt(class='col-sm-3') Winner
-    dd(class='col-sm-9') #{game.players[game.playerWinnerId].name}
+    if game.playerWinnerId
+      dt(class='col-sm-3') Winner
+      dd(class='col-sm-9') #{game.players[game.playerWinnerId].name}

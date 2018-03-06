@@ -11,4 +11,5 @@ block content
       p None... yet!
 
   p(class='lead float-right')
-    a(href='#',class='btn btn-lg btn-secondary') Start new
+    form(method='POST' action='/games')
+      button.btn.btn-lg.btn-secondary(type='submit') Start new

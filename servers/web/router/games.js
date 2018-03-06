@@ -52,6 +52,21 @@ router.param('game_id', (request, response, next, id) => {
     .catch(error => response.status(500).send(error.message));
 });
 
+router.route('/')
+  .post((request, response) => {
+    const options = {
+      uri: `http://localhost:${config.get('games.port')}/api/v1/games`,
+      method: 'POST',
+      body: {
+        player1id: request.session.playerId,
+      },
+    };
+    httpClient(options, request.id)
+      .then((game) => {
+        response.redirect(`/games/${game.id}`);
+      });
+  });
+
 router.route('/:game_id')
   .get((req, res) => {
     if (isEmpty(req.game)) {

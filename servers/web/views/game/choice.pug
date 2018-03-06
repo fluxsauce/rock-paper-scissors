@@ -1,7 +1,9 @@
-mixin choice(selection)
+mixin choice(gameId, selection)
   if selection === 'rock'
     span ⛰️
   else if selection === 'paper'
     span 📝
-  else
+  else if selection === 'scissors'
     span ✂️
+  else
+    span NOT IMPLEMENTED
