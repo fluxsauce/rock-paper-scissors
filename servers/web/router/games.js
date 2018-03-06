@@ -73,10 +73,16 @@ router.route('/:game_id')
     if (isEmpty(request.game)) {
       return response.sendStatus(404);
     }
+    const messages = [];
+    if (request.session.message) {
+      messages.push(request.session.message);
+      delete request.session.message;
+    }
     return response.render('game', {
       viewerPlayerId: request.session.playerId,
       game: request.game,
       rules: referee.rules(),
+      messages
     });
   });
 
@@ -104,7 +110,10 @@ router.route('/:game_id/choice')
         };
         return httpClient(options, request.id)
           .then((game) => {
-            response.redirect(`/games/${game.id}`);
+            if (game.state === 'pending' && game.player1choice !== null && game.player2choice !== null) {
+              return response.redirect(307, `/games/${game.id}/judge`);
+            }
+            return response.redirect(`/games/${game.id}`);
           });
       }
       return response.status(400).send('what');
@@ -131,6 +140,29 @@ router.route('/:game_id/join')
         });
     }
     return response.sendStatus(500);
+  });
+
+router.route('/:game_id/judge')
+  .post((request, response) => {
+    if (isEmpty(request.game)) {
+      return response.sendStatus(404);
+    }
+    const options = {
+      uri: `http://localhost:${config.get('games.port')}/api/v1/games/${request.game.id}/judge`,
+      method: 'POST',
+    };
+    return httpClient(options, request.id)
+      .then((game) => {
+        if (isNull(game.playerWinnerId) && game.state === 'final') {
+          request.session.message = { level: 'warning', body: 'You have tied.' };
+        } else if (game.playerWinnerId === request.session.playerId) {
+          request.session.message = { level: 'success', body: 'You have succeeded.' };
+        } else {
+          request.session.message = { level: 'danger', body: 'You were defeated.' };
+        }
+
+        response.redirect(`/games/${game.id}`);
+      });
   });
 
 module.exports = router;
