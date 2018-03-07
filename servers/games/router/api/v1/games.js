@@ -1,5 +1,5 @@
 const express = require('express');
-const games = require('../../../../../lib/games');
+const games = require('../../../lib/games');
 const Game = require('../../../../../lib/Game');
 const isEmpty = require('lodash/isEmpty');
 

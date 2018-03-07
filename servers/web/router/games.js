@@ -82,7 +82,7 @@ router.route('/:game_id')
       viewerPlayerId: request.session.playerId,
       game: request.game,
       rules: referee.rules(),
-      messages
+      messages,
     });
   });
 
