@@ -1,11 +1,11 @@
 const express = require('express');
-const games = require('../../../lib/games');
-const Game = require('../../../../../lib/Game');
+const games = require('./lib/games');
+const Game = require('./lib/Game');
 const isEmpty = require('lodash/isEmpty');
 
 const router = new express.Router();
 
-router.route('/')
+router.route('/api/v1/games')
   .get((request, response) => {
     games.fetch(request.body)
       .then(result => response.send(result))
@@ -25,7 +25,7 @@ router.param('game_id', (request, response, next, id) => {
     });
 });
 
-router.route('/:game_id')
+router.route('/api/v1/games/:game_id')
   .get((request, response) => {
     if (isEmpty(request.game)) {
       return response.sendStatus(404);
@@ -41,7 +41,7 @@ router.route('/:game_id')
       .catch(error => response.status(500).send({ error: error.message }));
   });
 
-router.route('/:game_id/judge')
+router.route('/api/v1/games/:game_id/judge')
   .post((request, response) => {
     if (isEmpty(request.game)) {
       return response.status(404).send();

@@ -1,6 +1,6 @@
 const knex = require('../../../lib/knex');
 const merge = require('lodash/merge');
-const Game = require('../../../lib/Game');
+const Game = require('./Game');
 const GameConstraint = require('../../../lib/constraints/Game');
 
 function fetch() {

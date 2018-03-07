@@ -1,11 +1,11 @@
 const express = require('express');
-const Player = require('../../../../../lib/Player');
-const players = require('../../../lib/players');
+const Player = require('./lib/Player');
+const players = require('./lib/players');
 const isEmpty = require('lodash/isEmpty');
 
 const router = new express.Router();
 
-router.route('/')
+router.route('/api/v1/players')
   .post((request, response) => {
     const player = new Player(request.body);
     players.create(player)
@@ -21,7 +21,7 @@ router.param('player_id', (request, response, next, id) => {
     });
 });
 
-router.route('/:player_id')
+router.route('/api/v1/players/:player_id')
   .get((request, response) => {
     if (isEmpty(request.player)) {
       return response.sendStatus(404);

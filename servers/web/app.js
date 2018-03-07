@@ -71,6 +71,6 @@ app.set('view engine', 'pug');
 
 app.route('/ping').get((req, res) => res.send('PONG'));
 
-app.use(require('./router/index'));
+app.use(require('./router'));
 
 module.exports = app;
