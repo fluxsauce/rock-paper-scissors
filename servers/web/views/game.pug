@@ -22,8 +22,12 @@ block content
       button.btn.btn-lg.btn-secondary.float-right(type='submit') Join
 
   dl(class='row')
-    dt(class='col-sm-3') Outcome
+    dt(class='col-sm-3') State
     dd(class='col-sm-9') #{game.state}
+    dt(class='col-sm-3') Result
     if game.playerWinnerId
-      dt(class='col-sm-3') Winner
-      dd(class='col-sm-9') #{game.players[game.playerWinnerId].name}
+      dd(class='col-sm-9') #{game.players[game.playerWinnerId].name} is the winner
+    else if game.state === 'final'
+      dd(class='col-sm-9') Tie
+    else
+      dd(class='col-sm-9') Pending

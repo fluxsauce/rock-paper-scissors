@@ -60,6 +60,7 @@ router.route('/games/:game_id')
       delete req.session.message;
     }
     return response.render('game', {
+      title: `Game #${req.game.id}`,
       viewerPlayerId: req.session.playerId,
       game: req.game,
       rules: referee.rules(),
@@ -151,6 +152,7 @@ router.get('/', (req, response) => {
     try {
       const games = JSON.parse(body);
       response.render('index', {
+        title: 'Home',
         games,
       });
     } catch (e) {

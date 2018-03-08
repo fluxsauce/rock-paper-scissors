@@ -25,7 +25,7 @@ module.exports = class {
       return outcome;
     }
 
-    if (!this.player1choice && !this.player1choice) {
+    if (!this.player1choice && !this.player2choice) {
       return outcome;
     }
 

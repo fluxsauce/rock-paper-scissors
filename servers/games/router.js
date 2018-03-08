@@ -51,7 +51,7 @@ router.route('/api/v1/games/:game_id/judge')
 
     const outcome = request.game.determineOutcome();
 
-    if (outcome.playerWinnerId === request.game.playerWinnerId) {
+    if (outcome.state !== 'final') {
       return response.status(304).end();
     }
 
