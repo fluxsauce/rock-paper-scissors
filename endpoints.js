@@ -1,7 +1,6 @@
 /* eslint-disable global-require,no-console */
 
 const endpoints = require('express-list-endpoints');
-const knex = require('./lib/knex');
 
 [
   { name: 'players', app: require('./servers/players/app') },
@@ -12,4 +11,4 @@ const knex = require('./lib/knex');
   console.log(endpoints(application.app));
 });
 
-knex.destroy();
+process.exit(0);
