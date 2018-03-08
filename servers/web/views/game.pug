@@ -9,9 +9,8 @@ block content
   table(class='table')
     thead
       tr
-        th(scope='col') Player ID
-        th(scope='col') Player Name
-        th(scope='col') Player Choice
+        th(scope='col') Player
+        th(scope='col') Choice
     tbody
       if game.player1id
         +player(game.id, game.state, game.playerWinnerId, game.player1id, game.players[game.player1id].name, game.player1choice, viewerPlayerId)
