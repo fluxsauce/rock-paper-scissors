@@ -22,7 +22,9 @@ router.param('game_id', (request, response, next, id) => {
     .then((result) => {
       request.game = result;
       next();
-    });
+      return request.game;
+    })
+    .catch(error => response.status(500).send({ error: error.message }));
 });
 
 router.route('/api/v1/games/:game_id')

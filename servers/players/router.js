@@ -18,7 +18,9 @@ router.param('player_id', (request, response, next, id) => {
     .then((result) => {
       request.player = result;
       next();
-    });
+      return result;
+    })
+    .catch(error => response.status(500).send({ error: error.message }));
 });
 
 router.route('/api/v1/players/:player_id')

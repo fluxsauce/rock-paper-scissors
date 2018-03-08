@@ -1,115 +1,90 @@
 const config = require('config');
 const express = require('express');
+const logger = require('../../lib/logger');
 const request = require('request');
 const isEmpty = require('lodash/isEmpty');
 const isNull = require('lodash/isNull');
 const httpClient = require('../../lib/httpClient');
+const gamesClient = require('../../clients/games')(config);
+const playersClient = require('../../clients/players')(config);
 const Referee = require('../../lib/Referee');
-const toInteger = require('lodash/toInteger');
 
 const referee = new Referee();
 const router = new express.Router();
 
-router.param('game_id', (res, response, next, id) => {
-  const options = {
-    uri: `http://localhost:${config.get('games.port')}/api/v1/games/${id}`,
-    method: 'GET',
-  };
-  return httpClient(options, res.id)
+function getPlayer(game, playerId, requestId) {
+  if (playerId > 0) {
+    return playersClient.get(playerId, requestId)
+      .then((player) => {
+        game.players[playerId] = player;
+        return game;
+      });
+  }
+  return game;
+}
+
+router.param('game_id', (req, response, next, id) => {
+  gamesClient.get(id, req.id)
     .then((game) => {
       game.players = {};
-
-      // @todo: abstract this stuff out
-      if (toInteger(game.player1id) > 0) {
-        const playerOptions = {
-          uri: `http://localhost:${config.get('players.port')}/api/v1/players/${game.player1id}`,
-          method: 'GET',
-        };
-        return httpClient(playerOptions, res.id)
-          .then((player) => {
-            game.players[game.player1id] = player;
-            return game;
-          });
-      }
       return game;
     })
+    .then(game => getPlayer(game, game.player1id, req.id))
+    .then(game => getPlayer(game, game.player2id, req.id))
     .then((game) => {
-      if (toInteger(game.player2id) > 0) {
-        const playerOptions = {
-          uri: `http://localhost:${config.get('players.port')}/api/v1/players/${game.player2id}`,
-          method: 'GET',
-        };
-        return httpClient(playerOptions, res.id)
-          .then((player) => {
-            game.players[game.player2id] = player;
-            return game;
-          });
-      }
+      req.game = game;
+      next();
       return game;
     })
-    .then((game) => {
-      res.game = game;
-      return next();
-    })
-    .catch(error => response.status(500).send(error.message));
+    .catch((error) => {
+      logger.error(error);
+      return response.status(500).send(error.message);
+    });
 });
 
-router.route('/')
-  .post((res, response) => {
-    const options = {
-      uri: `http://localhost:${config.get('games.port')}/api/v1/games`,
-      method: 'POST',
-      body: {
-        player1id: res.session.playerId,
-      },
-    };
-    httpClient(options, res.id)
-      .then((game) => {
-        response.redirect(`/games/${game.id}`);
-      });
+router.route('/games')
+  .post((req, response) => {
+    gamesClient.create(req.session.playerId, req.id)
+      .then(game => response.redirect(`/games/${game.id}`))
+      .catch(error => response.status(500).send(error.message));
   });
 
 router.route('/games/:game_id')
-  .get((res, response) => {
-    if (isEmpty(res.game)) {
+  .get((req, response) => {
+    if (isEmpty(req.game)) {
       return response.sendStatus(404);
     }
     const messages = [];
-    if (res.session.message) {
-      messages.push(res.session.message);
-      delete res.session.message;
+    if (req.session.message) {
+      messages.push(req.session.message);
+      delete req.session.message;
     }
     return response.render('game', {
-      viewerPlayerId: res.session.playerId,
-      game: res.game,
+      viewerPlayerId: req.session.playerId,
+      game: req.game,
       rules: referee.rules(),
       messages,
     });
   });
 
 router.route('/games/:game_id/choice')
-  .post((res, response) => {
-    if (isEmpty(res.game)) {
+  .post((req, response) => {
+    if (isEmpty(req.game)) {
       return response.sendStatus(404);
     }
-    if (res.body.choice) {
+    if (req.body.choice) {
       const body = {};
 
       // Determine which player you are.
       // @todo do this in a less horrible way
-      if (res.session.playerId === res.game.player1id) {
-        body.player1choice = res.body.choice;
-      } else if (res.session.playerId === res.game.player2id) {
-        body.player2choice = res.body.choice;
+      if (req.session.playerId === req.game.player1id) {
+        body.player1choice = req.body.choice;
+      } else if (req.session.playerId === req.game.player2id) {
+        body.player2choice = req.body.choice;
       }
 
       if (!isEmpty(body)) {
-        const options = {
-          uri: `http://localhost:${config.get('games.port')}/api/v1/games/${res.game.id}`,
-          method: 'PATCH',
-          body,
-        };
-        return httpClient(options, res.id)
+        return gamesClient.update(req.game.id, body, req.id)
           .then((game) => {
             if (game.state === 'pending' && game.player1choice !== null && game.player2choice !== null) {
               return response.redirect(307, `/games/${game.id}/judge`);
@@ -123,64 +98,63 @@ router.route('/games/:game_id/choice')
   });
 
 router.route('/games/:game_id/join')
-  .post((res, response) => {
-    if (isEmpty(res.game)) {
+  .post((req, response) => {
+    if (isEmpty(req.game)) {
       return response.sendStatus(404);
     }
-    if (isNull(res.game.player2id)) {
+    if (isNull(req.game.player2id)) {
       const options = {
-        uri: `http://localhost:${config.get('games.port')}/api/v1/games/${res.game.id}`,
+        uri: `http://localhost:${config.get('games.port')}/api/v1/games/${req.game.id}`,
         method: 'PATCH',
         body: {
-          player2id: res.session.playerId,
+          player2id: req.session.playerId,
         },
       };
-      return httpClient(options, res.id)
-        .then((game) => {
-          response.redirect(`/games/${game.id}`);
-        });
+      return httpClient(options, req.id)
+        .then(game => response.redirect(`/games/${game.id}`))
+        .catch(error => response.status(500).send(error.message));
     }
     return response.sendStatus(500);
   });
 
 router.route('/games/:game_id/judge')
-  .post((res, response) => {
-    if (isEmpty(res.game)) {
+  .post((req, response) => {
+    if (isEmpty(req.game)) {
       return response.sendStatus(404);
     }
     const options = {
-      uri: `http://localhost:${config.get('games.port')}/api/v1/games/${res.game.id}/judge`,
+      uri: `http://localhost:${config.get('games.port')}/api/v1/games/${req.game.id}/judge`,
       method: 'POST',
     };
-    return httpClient(options, res.id)
+    return httpClient(options, req.id)
       .then((game) => {
         if (isNull(game.playerWinnerId) && game.state === 'final') {
-          res.session.message = { level: 'warning', body: 'You have tied.' };
-        } else if (game.playerWinnerId === res.session.playerId) {
-          res.session.message = { level: 'success', body: 'You have succeeded.' };
+          req.session.message = { level: 'warning', body: 'You have tied.' };
+        } else if (game.playerWinnerId === req.session.playerId) {
+          req.session.message = { level: 'success', body: 'You have succeeded.' };
         } else {
-          res.session.message = { level: 'danger', body: 'You were defeated.' };
+          req.session.message = { level: 'danger', body: 'You were defeated.' };
         }
 
-        response.redirect(`/games/${game.id}`);
-      });
+        return response.redirect(`/games/${game.id}`);
+      }).catch(error => response.status(500).send(error.message));
   });
 
-router.get('/', (req, res) => {
+router.get('/', (req, response) => {
   const options = {
     method: 'GET',
     headers: {
       'X-Request-Id': req.id,
     },
   };
-  request(`http://localhost:${config.get('games.port')}/api/v1/games`, options, (error, response, body) => {
+  request(`http://localhost:${config.get('games.port')}/api/v1/games`, options, (error, res, body) => {
     try {
       const games = JSON.parse(body);
-      res.render('index', {
+      response.render('index', {
         games,
       });
     } catch (e) {
-      res.status(500).send(error.message);
+      response.status(500).send(error.message);
     }
   });
 });

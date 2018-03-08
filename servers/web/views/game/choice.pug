@@ -1,5 +1,7 @@
-mixin choice(playerId, selection, gameId, viewerPlayerId)
-  if selection === 'rock'
+mixin choice(playerId, selection, gameId, viewerPlayerId, gameState)
+  if gameState === 'pending' && playerId !== viewerPlayerId
+    button.btn.btn-secondary.btn-sm(disabled) Hidden
+  else if selection === 'rock'
     button.btn.btn-outline-secondary(title=selection,disabled) ⛰️
   else if selection === 'paper'
     button.btn.btn-outline-secondary(title=selection,disabled) 📝

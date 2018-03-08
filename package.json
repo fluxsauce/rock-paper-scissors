@@ -57,14 +57,22 @@
     "eslint-config-airbnb-base": "^12.1.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-mocha": "^4.11.0",
+    "eslint-plugin-promise": "^3.6.0",
     "mocha": "^5.0.1",
     "nyc": "^11.4.1",
     "package-json-validator": "^0.6.3"
   },
   "eslintConfig": {
-    "extends": "airbnb-base",
+    "plugins": [
+      "promise"
+    ],
+    "extends": [
+      "airbnb-base",
+      "plugin:promise/recommended"
+    ],
     "rules": {
-      "no-param-reassign": "off"
+      "no-param-reassign": "off",
+      "promise/no-callback-in-promise": "off"
     }
   }
 }
