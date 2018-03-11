@@ -1,7 +1,7 @@
 const knex = require('../../../lib/knex');
 const merge = require('lodash/merge');
 const Game = require('./Game');
-const GameConstraint = require('../../../lib/constraints/Game');
+const joiSchemas = require('../../../lib/joiSchemas');
 
 function fetch() {
   return knex('games');
@@ -10,7 +10,7 @@ function fetch() {
 function create(raw) {
   let game;
 
-  return GameConstraint.validate(raw)
+  return joiSchemas.Game.validate(raw)
     .then((validated) => {
       game = validated;
 
@@ -39,7 +39,7 @@ function update(original, raw) {
   let game = merge(original, raw);
   game.lastUpdated = new Date();
 
-  return GameConstraint.validate(game)
+  return joiSchemas.Game.validate(game)
     .then((validated) => {
       game = validated;
 

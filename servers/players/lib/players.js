@@ -1,8 +1,8 @@
 const knex = require('../../../lib/knex');
-const PlayerConstraint = require('../../../lib/constraints/Player');
+const joiSchemas = require('../../../lib/joiSchemas');
 
 function create(raw) {
-  return PlayerConstraint.validate(raw)
+  return joiSchemas.validate(raw)
     .then(validated => knex.insert(validated)
       .into('players'))
     .then((result) => {
