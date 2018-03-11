@@ -1,5 +1,5 @@
 mixin list(games)
-  div(class='list-group')
+  div.list-group
     each game in games
       - const classes = [ 'list-group-item', 'list-group-item-action', 'flex-column', 'align-items-start' ];
       - if (game.state === 'final') { classes.push('list-group-item-dark'); }
@@ -9,7 +9,7 @@ mixin list(games)
           small
             | #{game.state}
             if (game.playerWinnerId)
-              |  - Player ##{game.playerWinnerId} won!
+              |  - #{game.players[game.playerWinnerId].name} won!
             else if (game.state === 'final')
               |  - Tied
-        p.mb1 Player #{game.player1id ? game.player1id : 'TBD'} vs. Player #{game.player2id ? game.player2id : 'TBD'}
+        p.mb1 #{game.player1id ? game.players[game.player1id].name : 'TBD'} vs. #{game.player2id ? game.players[game.player2id].name : 'TBD'}

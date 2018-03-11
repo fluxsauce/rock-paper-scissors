@@ -9,15 +9,24 @@ const Referee = require('../games/lib/Referee');
 const referee = new Referee();
 const router = new express.Router();
 
-function getPlayer(game, playerId, requestId) {
-  if (playerId > 0) {
-    return playersClient.get(playerId, requestId)
-      .then((result) => {
-        game.players[playerId] = result.body;
-        return game;
-      });
+function getPlayers(game, requestId) {
+  game.players = {};
+  const promises = [];
+  if (!isNull(game.player1id)) {
+    promises.push(playersClient.get(game.player1id, requestId).then(result => result.body));
   }
-  return game;
+  if (!isNull(game.player2id)) {
+    promises.push(playersClient.get(game.player2id, requestId).then(result => result.body));
+  }
+  return Promise.all(promises)
+    .then((players) => {
+      players.forEach((player) => {
+        if (player.id) {
+          game.players[player.id] = player;
+        }
+      });
+      return game;
+    });
 }
 
 router.param('game_id', (req, response, next, id) => {
@@ -26,12 +35,9 @@ router.param('game_id', (req, response, next, id) => {
       if (result.statusCode === 404) {
         throw new Error('404');
       }
-      const game = result.body;
-      game.players = {};
-      return game;
+      return result.body;
     })
-    .then(game => getPlayer(game, game.player1id, req.id))
-    .then(game => getPlayer(game, game.player2id, req.id))
+    .then(game => getPlayers(game, req.id))
     .then((game) => {
       req.game = game;
       return next();
@@ -142,10 +148,17 @@ router.get('/', (req, response, next) =>
   Promise.all([
     gamesClient.fetch({ state: 'pending', limit: 3, order: 'asc' }, req.id),
     gamesClient.fetch({ state: 'final', limit: 3, order: 'desc' }, req.id),
-  ]).then(([pending, final]) => response.render('index', {
+  ]).then(([pendingFetch, finalFetch]) => [
+    pendingFetch.body,
+    finalFetch.body,
+  ]).then(([pending, final]) => Promise.all([
+    Promise.all(pending.map(game => getPlayers(game, req.id))),
+    Promise.all(final.map(game => getPlayers(game, req.id))),
+  ])).then(([pending, final]) => response.render('index', {
     title: 'Home',
-    pending: pending.body,
-    final: final.body,
-  })).catch(error => next(error)));
+    pending,
+    final,
+  }))
+    .catch(error => next(error)));
 
 module.exports = router;
