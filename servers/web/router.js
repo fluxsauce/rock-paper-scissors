@@ -4,7 +4,6 @@ const isEmpty = require('lodash/isEmpty');
 const isNull = require('lodash/isNull');
 const httpClient = require('../../lib/httpClient');
 const gamesClient = require('../../clients/games')(config);
-const logger = require('../../lib/logger');
 const playersClient = require('../../clients/players')(config);
 const Referee = require('../../lib/Referee');
 
@@ -151,20 +150,14 @@ router.route('/games/:game_id/judge')
       .catch(error => next(error));
   });
 
-router.get('/', (req, response, next) => {
-  const options = {
-    url: `http://localhost:${config.get('games.port')}/api/v1/games`,
-    method: 'GET',
-  };
-  return httpClient(options, req.id)
-    .then((result) => {
-      const games = result.body;
-      return response.render('index', {
-        title: 'Home',
-        games,
-      });
-    })
-    .catch(error => next(error));
-});
+router.get('/', (req, response, next) =>
+  Promise.all([
+    gamesClient.fetch({ state: 'pending', limit: 3, order: 'asc' }, req.id),
+    gamesClient.fetch({ state: 'final', limit: 3, order: 'desc' }, req.id),
+  ]).then(([pending, final]) => response.render('index', {
+    title: 'Home',
+    pending: pending.body,
+    final: final.body,
+  })).catch(error => next(error)));
 
 module.exports = router;

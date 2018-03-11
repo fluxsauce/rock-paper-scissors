@@ -113,6 +113,6 @@ body {
   Custom
  */
 
-.available {
+.pending, .final {
   padding-bottom: 1em;
 }

@@ -3,8 +3,18 @@ const merge = require('lodash/merge');
 const Game = require('./Game');
 const joiSchemas = require('../../../lib/joiSchemas');
 
-function fetch() {
-  return knex('games');
+function fetch(criteria) {
+  const query = knex.select().from('games');
+  if (criteria.state) {
+    query.where('state', criteria.state);
+  }
+  if (criteria.limit) {
+    query.limit(criteria.limit);
+  }
+  if (criteria.order) {
+    query.orderBy('id', criteria.order);
+  }
+  return query;
 }
 
 function create(raw) {

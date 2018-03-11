@@ -7,7 +7,7 @@ const router = new express.Router();
 
 router.route('/api/v1/games')
   .get((request, response) => {
-    games.fetch(request.body)
+    games.fetch(request.query)
       .then(result => response.send(result))
       .catch(error => response.status(500).send({ error: error.message }));
   })

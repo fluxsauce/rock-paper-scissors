@@ -1,6 +1,14 @@
 const httpClient = require('../lib/httpClient');
 
 module.exports = (config) => {
+  function fetch(criteria, requestId) {
+    return httpClient({
+      uri: `http://localhost:${config.get('games.port')}/api/v1/games`,
+      method: 'GET',
+      qs: criteria,
+    }, requestId);
+  }
+
   function get(id, requestId) {
     return httpClient({
       uri: `http://localhost:${config.get('games.port')}/api/v1/games/${id}`,
@@ -27,6 +35,7 @@ module.exports = (config) => {
   }
 
   return {
+    fetch,
     get,
     create,
     update,
