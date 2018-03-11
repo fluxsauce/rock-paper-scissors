@@ -54,18 +54,12 @@ router.route('/games/:game_id')
     if (isEmpty(req.game)) {
       return response.sendStatus(404);
     }
+
     const messages = [];
     if (req.session.message) {
       messages.push(req.session.message);
       delete req.session.message;
     }
-
-    const io = req.app.get('socketio');
-
-    io.to(req.game.id).emit('message', {
-      body: `${req.session.playerName} is watching!`,
-      level: 'info',
-    });
 
     return response.render('game', {
       title: `Game #${req.game.id}`,
@@ -144,10 +138,6 @@ router.route('/games/:game_id/judge')
         } else {
           req.session.message = { level: 'danger', body: 'You were defeated.' };
         }
-
-        const io = req.app.get('socketio');
-
-        io.to(req.game.id).emit('reload');
 
         return response.redirect(`/games/${game.id}`);
       }).catch(error => response.status(500).send(error.message));
