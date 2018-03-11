@@ -47,6 +47,7 @@
     "pug": "^2.0.0",
     "request": "^2.83.0",
     "request-promise": "^4.2.2",
+    "socket.io": "^2.0.4",
     "winston": "^2.4.0"
   },
   "devDependencies": {

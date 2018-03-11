@@ -2,13 +2,11 @@ const compression = require('compression');
 const config = require('config');
 const express = require('express');
 const httpClient = require('../../lib/httpClient');
-const knex = require('../../lib/knex');
 const requestId = require('express-request-id')();
 const morgan = require('morgan');
 const logger = require('../../lib/logger');
 const path = require('path');
-const session = require('express-session');
-const KnexSessionStore = require('connect-session-knex')(session);
+const session = require('./session');
 
 const app = express();
 
@@ -28,16 +26,11 @@ app.use('/bootstrap/css', express.static('./node_modules/bootstrap/dist/css', st
 app.use('/bootstrap/js', express.static('./node_modules/bootstrap/dist/js', staticConfig));
 app.use('/jquery/js', express.static('./node_modules/jquery/dist', staticConfig));
 app.use('/popper/js', express.static('./node_modules/popper.js/dist/umd', staticConfig));
+app.use('/socket/js', express.static('./node_modules/socket.io-client/dist', staticConfig));
 
 app.use(requestId);
 
-app.use(session({
-  store: new KnexSessionStore({ knex }),
-  secret: config.get('session.secret'),
-  cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 },
-  resave: true,
-  saveUninitialized: true,
-}));
+app.use(session);
 
 app.use((request, response, next) => {
   if (request.session.playerId) {
@@ -46,6 +39,9 @@ app.use((request, response, next) => {
   const options = {
     uri: `http://localhost:${config.get('players.port')}/api/v1/players`,
     method: 'POST',
+    body: {
+      sessionId: request.session.id,
+    },
   };
   return httpClient(options, request.id)
     .then((player) => {
@@ -57,7 +53,7 @@ app.use((request, response, next) => {
 
 app.use(morgan((tokens, req, res) => [
   // req.id,
-  // req.session.id,
+  req.session.id,
   req.session.playerName,
   tokens.method(req, res),
   tokens.url(req, res),
