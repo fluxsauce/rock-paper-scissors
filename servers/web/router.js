@@ -1,11 +1,10 @@
 const config = require('config');
 const express = require('express');
-const logger = require('../../lib/logger');
-const request = require('request');
 const isEmpty = require('lodash/isEmpty');
 const isNull = require('lodash/isNull');
 const httpClient = require('../../lib/httpClient');
 const gamesClient = require('../../clients/games')(config);
+const logger = require('../../lib/logger');
 const playersClient = require('../../clients/players')(config);
 const Referee = require('../../lib/Referee');
 
@@ -15,8 +14,8 @@ const router = new express.Router();
 function getPlayer(game, playerId, requestId) {
   if (playerId > 0) {
     return playersClient.get(playerId, requestId)
-      .then((player) => {
-        game.players[playerId] = player;
+      .then((result) => {
+        game.players[playerId] = result.body;
         return game;
       });
   }
@@ -25,7 +24,11 @@ function getPlayer(game, playerId, requestId) {
 
 router.param('game_id', (req, response, next, id) => {
   gamesClient.get(id, req.id)
-    .then((game) => {
+    .then((result) => {
+      if (result.statusCode === 404) {
+        throw new Error('404');
+      }
+      const game = result.body;
       game.players = {};
       return game;
     })
@@ -33,20 +36,23 @@ router.param('game_id', (req, response, next, id) => {
     .then(game => getPlayer(game, game.player2id, req.id))
     .then((game) => {
       req.game = game;
-      next();
-      return game;
+      return next();
     })
     .catch((error) => {
-      logger.error(error);
-      return response.status(500).send(error.message);
+      if (error.message === '404') {
+        return response.status(404).render('404', {
+          title: '404',
+        });
+      }
+      return next(error);
     });
 });
 
 router.route('/games')
-  .post((req, response) => {
+  .post((req, response, next) => {
     gamesClient.create(req.session.playerId, req.id)
-      .then(game => response.redirect(`/games/${game.id}`))
-      .catch(error => response.status(500).send(error.message));
+      .then(result => response.redirect(`/games/${result.body.id}`))
+      .catch(error => next(error));
   });
 
 router.route('/games/:game_id')
@@ -88,11 +94,11 @@ router.route('/games/:game_id/choice')
 
       if (!isEmpty(body)) {
         return gamesClient.update(req.game.id, body, req.id)
-          .then((game) => {
-            if (game.state === 'pending' && game.player1choice !== null && game.player2choice !== null) {
-              return response.redirect(307, `/games/${game.id}/judge`);
+          .then((result) => {
+            if (result.body.state === 'pending' && result.body.player1choice !== null && result.body.player2choice !== null) {
+              return response.redirect(307, `/games/${result.body.id}/judge`);
             }
-            return response.redirect(`/games/${game.id}`);
+            return response.redirect(`/games/${result.body.id}`);
           });
       }
       return response.status(400).send('what');
@@ -101,7 +107,7 @@ router.route('/games/:game_id/choice')
   });
 
 router.route('/games/:game_id/join')
-  .post((req, response) => {
+  .post((req, response, next) => {
     if (isEmpty(req.game)) {
       return response.sendStatus(404);
     }
@@ -114,14 +120,14 @@ router.route('/games/:game_id/join')
         },
       };
       return httpClient(options, req.id)
-        .then(game => response.redirect(`/games/${game.id}`))
-        .catch(error => response.status(500).send(error.message));
+        .then(result => response.redirect(`/games/${result.body.id}`))
+        .catch(error => next(error));
     }
-    return response.sendStatus(500);
+    return next(new TypeError('Missing player2Id'));
   });
 
 router.route('/games/:game_id/judge')
-  .post((req, response) => {
+  .post((req, response, next) => {
     if (isEmpty(req.game)) {
       return response.sendStatus(404);
     }
@@ -130,7 +136,8 @@ router.route('/games/:game_id/judge')
       method: 'POST',
     };
     return httpClient(options, req.id)
-      .then((game) => {
+      .then((result) => {
+        const game = result.body;
         if (isNull(game.playerWinnerId) && game.state === 'final') {
           req.session.message = { level: 'warning', body: 'You have tied.' };
         } else if (game.playerWinnerId === req.session.playerId) {
@@ -140,27 +147,24 @@ router.route('/games/:game_id/judge')
         }
 
         return response.redirect(`/games/${game.id}`);
-      }).catch(error => response.status(500).send(error.message));
+      })
+      .catch(error => next(error));
   });
 
-router.get('/', (req, response) => {
+router.get('/', (req, response, next) => {
   const options = {
+    url: `http://localhost:${config.get('games.port')}/api/v1/games`,
     method: 'GET',
-    headers: {
-      'X-Request-Id': req.id,
-    },
   };
-  request(`http://localhost:${config.get('games.port')}/api/v1/games`, options, (error, res, body) => {
-    try {
-      const games = JSON.parse(body);
-      response.render('index', {
+  return httpClient(options, req.id)
+    .then((result) => {
+      const games = result.body;
+      return response.render('index', {
         title: 'Home',
         games,
       });
-    } catch (e) {
-      response.status(500).send(error.message);
-    }
-  });
+    })
+    .catch(error => next(error));
 });
 
 module.exports = router;

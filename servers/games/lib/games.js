@@ -29,9 +29,12 @@ function get(id) {
     .where({ id })
     .select()
     .then((result) => {
-      const game = new Game(result.pop());
-      game.lastUpdated = new Date(game.lastUpdated);
-      return game;
+      if (result.length > 0) {
+        const game = new Game(result.pop());
+        game.lastUpdated = new Date(game.lastUpdated);
+        return game;
+      }
+      return null;
     });
 }
 

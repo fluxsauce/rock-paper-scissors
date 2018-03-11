@@ -44,9 +44,9 @@ app.use((request, response, next) => {
     },
   };
   return httpClient(options, request.id)
-    .then((player) => {
-      request.session.playerId = player.id;
-      request.session.playerName = player.name;
+    .then((result) => {
+      request.session.playerId = result.body.id;
+      request.session.playerName = result.body.name;
       return next();
     });
 });
@@ -68,5 +68,21 @@ app.set('view engine', 'pug');
 app.route('/ping').get((req, res) => res.send('PONG'));
 
 app.use(require('./router'));
+
+app.use((request, response) => {
+  return response.status(404).render('404', {
+    title: '404',
+  });
+});
+
+app.use((error, request, response, next) => {
+  if (response.headersSent) {
+    return next(error);
+  }
+  logger.error(error);
+  return response.status(500).render('500', {
+    title: '500',
+  });
+});
 
 module.exports = app;
