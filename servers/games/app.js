@@ -1,4 +1,5 @@
 const express = require('express');
+const knex = require('../../lib/knex');
 const requestId = require('express-request-id')();
 const morgan = require('morgan');
 const logger = require('../../lib/logger');
@@ -19,7 +20,14 @@ app.use(morgan((tokens, req, res) => [
   tokens['response-time'](req, res), 'ms',
 ].join(' '), { stream: { write: message => logger.info(message.trim()) } }));
 
-app.route('/ping').get((req, res) => res.send('PONG'));
+app.route('/ping').get((request, response) => {
+  knex.raw('SELECT 1 = 1')
+    .then(() => response.end('PONG'))
+    .catch((err) => {
+      logger.error(err.message);
+      response.status(500).end(err.message);
+    });
+});
 
 app.use(require('./router'));
 

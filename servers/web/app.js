@@ -69,11 +69,7 @@ app.route('/ping').get((req, res) => res.send('PONG'));
 
 app.use(require('./router'));
 
-app.use((request, response) => {
-  return response.status(404).render('404', {
-    title: '404',
-  });
-});
+app.use((request, response) => response.status(404).render('404', { title: '404' }));
 
 app.use((error, request, response, next) => {
   if (response.headersSent) {

@@ -1,4 +1,6 @@
 const express = require('express');
+const knex = require('../../lib/knex');
+const logger = require('../../lib/logger');
 const requestId = require('express-request-id')();
 const morgan = require('morgan');
 
@@ -11,7 +13,14 @@ app.use(requestId);
 
 app.use(morgan('combined'));
 
-app.route('/ping').get((req, res) => res.send('PONG'));
+app.route('/ping').get((request, response) => {
+  knex.raw('SELECT 1 = 1')
+    .then(() => response.end('PONG'))
+    .catch((err) => {
+      logger.error(err.message);
+      response.status(500).end(err.message);
+    });
+});
 
 app.use(require('./router'));
 
