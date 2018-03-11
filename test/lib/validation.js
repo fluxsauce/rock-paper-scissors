@@ -1,9 +1,9 @@
 const chai = require('chai');
-const joiSchemas = require('../../lib/joiSchemas');
+const joiSchemas = require('../../lib/validation');
 
 const should = chai.should();
 
-describe('lib/joiSchemas.js', function () {
+describe('lib/validation.js', function () {
   context('playerChoice', function () {
     it('should accept valid input', function (done) {
       const result = joiSchemas.playerChoice.validate('rock');

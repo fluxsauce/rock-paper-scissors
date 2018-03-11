@@ -1,5 +1,5 @@
 const isNull = require('lodash/isNull');
-const Referee = require('../../../lib/Referee');
+const Referee = require('./Referee');
 
 const referee = new Referee();
 

@@ -2,10 +2,9 @@ const config = require('config');
 const express = require('express');
 const isEmpty = require('lodash/isEmpty');
 const isNull = require('lodash/isNull');
-const httpClient = require('../../lib/httpClient');
-const gamesClient = require('../../clients/games')(config);
-const playersClient = require('../../clients/players')(config);
-const Referee = require('../../lib/Referee');
+const gamesClient = require('../../lib/gamesClient')(config);
+const playersClient = require('../../lib/playersClient')(config);
+const Referee = require('../games/lib/Referee');
 
 const referee = new Referee();
 const router = new express.Router();
@@ -111,14 +110,7 @@ router.route('/games/:game_id/join')
       return response.sendStatus(404);
     }
     if (isNull(req.game.player2id)) {
-      const options = {
-        uri: `http://localhost:${config.get('games.port')}/api/v1/games/${req.game.id}`,
-        method: 'PATCH',
-        body: {
-          player2id: req.session.playerId,
-        },
-      };
-      return httpClient(options, req.id)
+      return gamesClient.update(req.game.id, { player2id: req.session.playerId }, req.game.id)
         .then(result => response.redirect(`/games/${result.body.id}`))
         .catch(error => next(error));
     }
@@ -130,11 +122,7 @@ router.route('/games/:game_id/judge')
     if (isEmpty(req.game)) {
       return response.sendStatus(404);
     }
-    const options = {
-      uri: `http://localhost:${config.get('games.port')}/api/v1/games/${req.game.id}/judge`,
-      method: 'POST',
-    };
-    return httpClient(options, req.id)
+    return gamesClient.judge(req.game.id, req.id)
       .then((result) => {
         const game = result.body;
         if (isNull(game.playerWinnerId) && game.state === 'final') {

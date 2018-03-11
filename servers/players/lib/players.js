@@ -1,8 +1,8 @@
 const knex = require('../../../lib/knex');
-const joiSchemas = require('../../../lib/joiSchemas');
+const validation = require('../../../lib/validation');
 
 function create(raw) {
-  return joiSchemas.Player.validate(raw)
+  return validation.Player.validate(raw)
     .then(validated => knex.insert(validated)
       .into('players'))
     .then((result) => {

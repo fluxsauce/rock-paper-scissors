@@ -1,7 +1,6 @@
 const compression = require('compression');
-const config = require('config');
 const express = require('express');
-const httpClient = require('../../lib/httpClient');
+const playersClient = require('../../lib/playersClient');
 const requestId = require('express-request-id')();
 const morgan = require('morgan');
 const logger = require('../../lib/logger');
@@ -36,14 +35,7 @@ app.use((request, response, next) => {
   if (request.session.playerId) {
     return next();
   }
-  const options = {
-    uri: `http://localhost:${config.get('players.port')}/api/v1/players`,
-    method: 'POST',
-    body: {
-      sessionId: request.session.id,
-    },
-  };
-  return httpClient(options, request.id)
+  return playersClient(request.session.playerId, request.id)
     .then((result) => {
       request.session.playerId = result.body.id;
       request.session.playerName = result.body.name;
