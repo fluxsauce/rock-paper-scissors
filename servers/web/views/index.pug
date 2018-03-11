@@ -2,12 +2,10 @@ extends layout.pug
 include list
 
 block content
-  div.final
-    h2 Finished Games
-    if final.length > 0
+  if final.length > 0
+    div.final
+      h2 Finished Games
       +list(final)
-    else
-      p None... yet!
 
   div.pending
     h2 Available Games

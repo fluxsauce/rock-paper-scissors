@@ -28,6 +28,7 @@
   "homepage": "https://gitlab.com/fluxsauce/rock-paper-scissors#README",
   "dependencies": {
     "bootstrap": "^4.0.0",
+    "chance": "^1.0.13",
     "compression": "^1.7.2",
     "config": "^1.29.4",
     "connect-session-knex": "^1.4.0",
@@ -39,7 +40,6 @@
     "jquery": "^3.3.1",
     "knex": "^0.14.4",
     "lodash": "^4.17.5",
-    "moniker": "^0.1.2",
     "morgan": "^1.9.0",
     "mysql": "^2.15.0",
     "pify": "^3.0.0",

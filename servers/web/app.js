@@ -1,6 +1,7 @@
 const compression = require('compression');
 const express = require('express');
-const playersClient = require('../../lib/playersClient');
+const config = require('config');
+const playersClient = require('../../lib/playersClient')(config);
 const requestId = require('express-request-id')();
 const morgan = require('morgan');
 const logger = require('../../lib/logger');
@@ -35,7 +36,7 @@ app.use((request, response, next) => {
   if (request.session.playerId) {
     return next();
   }
-  return playersClient(request.session.playerId, request.id)
+  return playersClient.create(request.session.id, request.id)
     .then((result) => {
       request.session.playerId = result.body.id;
       request.session.playerName = result.body.name;

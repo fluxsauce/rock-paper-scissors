@@ -1,10 +1,12 @@
-const Moniker = require('moniker');
+const Chance = require('chance');
+
+const chance = new Chance();
 
 module.exports = class {
   constructor(input) {
     this.id = input.id || null;
     this.lastUpdated = new Date();
-    this.name = input.name || Moniker.choose();
+    this.name = input.name || chance.name();
     this.sessionId = input.sessionId;
   }
 };
