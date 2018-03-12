@@ -113,6 +113,7 @@ body {
   Custom
  */
 
-.pending, .final {
+.pending,
+.final {
   padding-bottom: 1em;
 }

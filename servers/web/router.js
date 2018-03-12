@@ -1,14 +1,20 @@
-const config = require('config');
 const express = require('express');
 const isEmpty = require('lodash/isEmpty');
 const isNull = require('lodash/isNull');
-const gamesClient = require('../../lib/gamesClient')(config);
-const playersClient = require('../../lib/playersClient')(config);
+const gamesClient = require('../../lib/gamesClient');
+const playersClient = require('../../lib/playersClient');
 const Referee = require('../games/lib/Referee');
 
 const referee = new Referee();
 const router = new express.Router();
 
+/**
+ * Decorate a game with players, if any.
+ *
+ * @param {Game} game - target.
+ * @param {string} requestId - X-Request-Id.
+ * @returns {Promise<Game>} with property players
+ */
 function getPlayers(game, requestId) {
   game.players = {};
   const promises = [];

@@ -70,7 +70,9 @@
     ],
     "rules": {
       "no-param-reassign": "off",
-      "promise/no-callback-in-promise": "off"
+      "promise/no-callback-in-promise": "off",
+      "require-jsdoc": "error",
+      "valid-jsdoc": "error"
     }
   }
 }
