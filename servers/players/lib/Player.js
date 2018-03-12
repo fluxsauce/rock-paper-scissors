@@ -7,6 +7,5 @@ module.exports = class {
     this.id = input.id || null;
     this.lastUpdated = new Date();
     this.name = input.name || chance.name();
-    this.sessionId = input.sessionId;
   }
 };

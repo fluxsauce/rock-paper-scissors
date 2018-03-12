@@ -35,7 +35,7 @@ app.use((request, response, next) => {
   if (request.session.playerId) {
     return next();
   }
-  return playersClient.create(request.session.id, request.id)
+  return playersClient.create(request.id)
     .then((result) => {
       request.session.playerId = result.body.id;
       request.session.playerName = result.body.name;
