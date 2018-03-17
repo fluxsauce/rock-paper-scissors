@@ -10,10 +10,7 @@ router.route('/api/v1/players')
     const player = new Player(request.body);
     players.create(player)
       .then(result => response.send(result))
-      .catch(error => {
-        console.log(error);
-        return response.status(500).send({ error: error.message });
-      });
+      .catch(error => response.status(500).send({ error: error.message }));
   });
 
 router.param('player_id', (request, response, next, id) => {

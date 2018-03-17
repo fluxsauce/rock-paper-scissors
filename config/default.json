@@ -1,8 +1,4 @@
 {
-  "logger": {
-    "format": "tiny",
-    "level": "debug"
-  },
   "database": {
     "client": "mysql",
     "connection": {

@@ -12,17 +12,16 @@ const router = new express.Router();
  * Decorate a game with players, if any.
  *
  * @param {Game} game - target.
- * @param {string} requestId - X-Request-Id.
  * @returns {Promise<Game>} with property players
  */
-function getPlayers(game, requestId) {
+function getPlayers(game) {
   game.players = {};
   const promises = [];
   if (!isNull(game.player1id)) {
-    promises.push(playersClient.get(game.player1id, requestId).then(result => result.body));
+    promises.push(playersClient.get(game.player1id).then(result => result.body));
   }
   if (!isNull(game.player2id)) {
-    promises.push(playersClient.get(game.player2id, requestId).then(result => result.body));
+    promises.push(playersClient.get(game.player2id).then(result => result.body));
   }
   return Promise.all(promises)
     .then((players) => {
@@ -36,14 +35,14 @@ function getPlayers(game, requestId) {
 }
 
 router.param('game_id', (req, response, next, id) => {
-  gamesClient.get(id, req.id)
+  gamesClient.get(id)
     .then((result) => {
       if (result.statusCode === 404) {
         throw new Error('404');
       }
       return result.body;
     })
-    .then(game => getPlayers(game, req.id))
+    .then(game => getPlayers(game))
     .then((game) => {
       req.game = game;
       return next();
@@ -60,7 +59,7 @@ router.param('game_id', (req, response, next, id) => {
 
 router.route('/games')
   .post((req, response, next) => {
-    gamesClient.create(req.session.playerId, req.id)
+    gamesClient.create(req.session.playerId)
       .then(result => response.redirect(`/games/${result.body.id}`))
       .catch(error => next(error));
   });
@@ -103,7 +102,7 @@ router.route('/games/:game_id/choice')
       }
 
       if (!isEmpty(body)) {
-        return gamesClient.update(req.game.id, body, req.id)
+        return gamesClient.update(req.game.id, body)
           .then((result) => {
             if (result.body.state === 'pending' && result.body.player1choice !== null && result.body.player2choice !== null) {
               return response.redirect(307, `/games/${result.body.id}/judge`);
@@ -134,7 +133,7 @@ router.route('/games/:game_id/judge')
     if (isEmpty(req.game)) {
       return response.sendStatus(404);
     }
-    return gamesClient.judge(req.game.id, req.id)
+    return gamesClient.judge(req.game.id)
       .then((result) => {
         const game = result.body;
         if (isNull(game.playerWinnerId) && game.state === 'final') {
@@ -152,14 +151,14 @@ router.route('/games/:game_id/judge')
 
 router.get('/', (req, response, next) =>
   Promise.all([
-    gamesClient.fetch({ state: 'pending', limit: 3, order: 'asc' }, req.id),
-    gamesClient.fetch({ state: 'final', limit: 3, order: 'desc' }, req.id),
+    gamesClient.fetch({ state: 'pending', limit: 3, order: 'asc' }),
+    gamesClient.fetch({ state: 'final', limit: 3, order: 'desc' }),
   ]).then(([pendingFetch, finalFetch]) => [
     pendingFetch.body,
     finalFetch.body,
   ]).then(([pending, final]) => Promise.all([
-    Promise.all(pending.map(game => getPlayers(game, req.id))),
-    Promise.all(final.map(game => getPlayers(game, req.id))),
+    Promise.all(pending.map(game => getPlayers(game))),
+    Promise.all(final.map(game => getPlayers(game))),
   ])).then(([pending, final]) => response.render('index', {
     title: 'Home',
     pending,
