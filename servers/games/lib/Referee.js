@@ -18,9 +18,7 @@ module.exports = class {
   }
 
   train(winner, loser) {
-    if (!this.training[winner]) {
-      this.training[winner] = {};
-    }
+    this.training[winner] = {};
     this.training[winner][loser] = true;
   }
 

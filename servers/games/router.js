@@ -6,10 +6,14 @@ const isEmpty = require('lodash/isEmpty');
 const router = new express.Router();
 
 router.route('/api/v1/games')
-  .get((request, response) => games.fetch(request.query)
-    .then(result => response.send(result)))
-  .post((request, response) => games.create(new Game(request.body))
-    .then(result => response.send(result)));
+  .get(async (request, response) => {
+    const game = await games.fetch(request.query);
+    response.send(game);
+  })
+  .post(async (request, response) => {
+    const game = await games.create(new Game(request.body));
+    response.send(game);
+  });
 
 router.param('game_id', async (request, response, next, id) => {
   request.game = await games.get(id);

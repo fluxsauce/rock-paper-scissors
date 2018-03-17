@@ -1,24 +1,37 @@
 const chai = require('chai');
-const joiSchemas = require('../../lib/validation');
+const validation = require('../../lib/validation');
 
 const should = chai.should();
 
 describe('lib/validation.js', function () {
-  context('playerChoice', function () {
+  context('Game', function () {
     it('should accept valid input', function (done) {
-      const result = joiSchemas.playerChoice.validate('rock');
+      const input = {
+        lastUpdated: new Date(),
+        state: 'pending',
+      };
+      const result = validation.Game.validate(input);
 
-      result.value.should.equal('rock');
+      result.value.should.deep.equal(input);
       should.not.exist(result.error);
 
       done();
     });
 
-    it('should reject invalid input', function (done) {
-      const result = joiSchemas.playerChoice.validate('pants');
+    it('should reject a string', function (done) {
+      const result = validation.Game.validate('pants');
 
       result.error.should.be.an('error');
-      result.error.message.should.include('"value" must be one of');
+      result.error.message.should.include('"value" must be an object');
+
+      done();
+    });
+
+    it('should reject invalid input', function (done) {
+      const result = validation.Game.validate({});
+
+      result.error.should.be.an('error');
+      result.error.message.should.include('child "lastUpdated" fails because');
 
       done();
     });
@@ -26,7 +39,7 @@ describe('lib/validation.js', function () {
 
   context('gameState', function () {
     it('should accept valid input', function (done) {
-      const result = joiSchemas.gameState.validate('final');
+      const result = validation.gameState.validate('final');
 
       result.value.should.equal('final');
       should.not.exist(result.error);
@@ -35,7 +48,7 @@ describe('lib/validation.js', function () {
     });
 
     it('should reject invalid input', function (done) {
-      const result = joiSchemas.gameState.validate('pants');
+      const result = validation.gameState.validate('pants');
 
       result.error.should.be.an('error');
       result.error.message.should.include('"value" must be one of');
@@ -46,7 +59,7 @@ describe('lib/validation.js', function () {
 
   context('id', function () {
     it('should accept valid input', function (done) {
-      const result = joiSchemas.id.validate(1);
+      const result = validation.id.validate(1);
 
       result.value.should.equal(1);
       should.not.exist(result.error);
@@ -55,7 +68,7 @@ describe('lib/validation.js', function () {
     });
 
     it('should reject invalid input', function (done) {
-      const result = joiSchemas.id.validate('pants');
+      const result = validation.id.validate('pants');
 
       result.error.should.be.an('error');
       result.error.message.should.equal('"value" must be a number');
@@ -64,23 +77,74 @@ describe('lib/validation.js', function () {
     });
   });
 
-  context('lastUpdated', function () {
+  context('Player', function () {
     it('should accept valid input', function (done) {
-      const date = new Date(2017, 6, 10, 6, 3);
+      const input = {
+        lastUpdated: new Date(),
+        name: 'Portok',
+      };
+      const result = validation.Player.validate(input);
 
-      const result = joiSchemas.lastUpdated.validate(date);
+      result.value.should.deep.equal(input);
+      should.not.exist(result.error);
 
-      result.value.should.equal(date);
+      done();
+    });
+
+    it('should reject a string', function (done) {
+      const result = validation.Player.validate('pants');
+
+      result.error.should.be.an('error');
+      result.error.message.should.include('"value" must be an object');
+
+      done();
+    });
+
+    it('should reject invalid input', function (done) {
+      const result = validation.Player.validate({});
+
+      result.error.should.be.an('error');
+      result.error.message.should.include('child "lastUpdated" fails because');
+
+      done();
+    });
+  });
+
+  context('playerChoice', function () {
+    it('should accept valid input', function (done) {
+      const result = validation.playerChoice.validate('rock');
+
+      result.value.should.equal('rock');
       should.not.exist(result.error);
 
       done();
     });
 
     it('should reject invalid input', function (done) {
-      const result = joiSchemas.lastUpdated.validate('pants');
+      const result = validation.playerChoice.validate('pants');
 
       result.error.should.be.an('error');
-      result.error.message.should.equal('"value" must be a number of milliseconds or valid date string');
+      result.error.message.should.include('"value" must be one of');
+
+      done();
+    });
+  });
+
+  context('playerName', function () {
+    it('should accept valid input', function (done) {
+      const result = validation.playerName.validate('Portok');
+
+      result.value.should.equal('Portok');
+      should.not.exist(result.error);
+
+      done();
+    });
+
+    it('should reject invalid input', function (done) {
+      const result = validation.playerName.validate({});
+
+      result.error.should.be.an('error');
+      result.error.message.should.include('"value" must be a string');
 
       done();
     });
