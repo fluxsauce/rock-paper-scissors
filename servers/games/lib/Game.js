@@ -6,7 +6,7 @@ const referee = new Referee();
 module.exports = class {
   constructor(input) {
     this.id = input.id || null;
-    this.lastUpdated = new Date();
+    this.lastUpdated = input.lastUpdated || new Date();
     this.player1id = input.player1id || null;
     this.player1choice = input.player1choice || null;
     this.player2id = input.player2id || null;

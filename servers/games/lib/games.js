@@ -1,4 +1,5 @@
-const knex = require('../../../lib/knex');
+const config = require('config');
+const knex = require('../../../lib/knex')(config);
 const merge = require('lodash/merge');
 const Game = require('./Game');
 const validation = require('../../../lib/validation');
@@ -58,9 +59,7 @@ function get(id) {
     .select()
     .then((result) => {
       if (result.length > 0) {
-        const game = new Game(result.pop());
-        game.lastUpdated = new Date(game.lastUpdated);
-        return game;
+        return new Game(result.pop());
       }
       return null;
     });

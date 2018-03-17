@@ -1,5 +1,5 @@
 const config = require('config');
-const knex = require('../../lib/knex');
+const knex = require('../../lib/knex')(config);
 const session = require('express-session');
 const KnexSessionStore = require('connect-session-knex')(session);
 

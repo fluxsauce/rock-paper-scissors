@@ -1,5 +1,6 @@
+const config = require('config');
 const express = require('express');
-const playersClient = require('../../lib/playersClient');
+const playersClient = require('../../lib/playersClient')(config);
 const path = require('path');
 const session = require('./session');
 
@@ -21,16 +22,14 @@ app.use('/socket/js', express.static('./node_modules/socket.io-client/dist'));
 
 app.use(session);
 
-app.use((request, response, next) => {
+app.use(async (request, response, next) => {
   if (request.session.playerId) {
     return next();
   }
-  return playersClient.create()
-    .then((result) => {
-      request.session.playerId = result.body.id;
-      request.session.playerName = result.body.name;
-      return next();
-    });
+  const result = await playersClient.create();
+  request.session.playerId = result.body.id;
+  request.session.playerName = result.body.name;
+  return next();
 });
 
 app.set('views', path.join(__dirname, 'views'));

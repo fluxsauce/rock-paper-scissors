@@ -1,12 +1,16 @@
 # rock-paper-scissors
 
+A multi-player Rock, Paper, Scissors game written in Node.js.
+
+Players are automatically created per session. To test, use two browser sessions that don't share cookies. For example, you could use a regular browser window and an incognito / private browser window.
+
 ## Setup
 
 ```bash
 npm i
-# Docker for MySQL database.
+# Start docker, which provides a MySQL database.
 docker-compose up -d
-# Create the Schema.
+# Create the MySQL schemas.
 ./node_modules/.bin/knex migrate:latest
 # Start PM2
 ./node_modules/.bin/pm2 start ./pm2.config.js
@@ -16,7 +20,19 @@ docker-compose up -d
 
 [http://localhost:5000/]()
 
+1. First Window
+    1. Click Start New
+    2. Make a choice
+2. Second Window
+    1. Click an available game
+    2. Click Join
+    3. Make a choice
+3. First Window
+    1. Reload to see result 
+
 ## Manual
+
+Using [HTTPie](https://httpie.org/), a command-line HTTP client.
 
 ```bash
 http POST :5010/api/v1/players

@@ -1,4 +1,5 @@
-const knex = require('../../../lib/knex');
+const config = require('config');
+const knex = require('../../../lib/knex')(config);
 const validation = require('../../../lib/validation');
 const Player = require('./Player');
 
@@ -30,9 +31,7 @@ function get(id) {
     .select()
     .then((result) => {
       if (result.length > 0) {
-        const player = new Player(result.pop());
-        player.lastUpdated = new Date(player.lastUpdated);
-        return player;
+        return new Player(result.pop());
       }
       return null;
     });

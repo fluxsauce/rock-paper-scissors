@@ -6,25 +6,14 @@ const isEmpty = require('lodash/isEmpty');
 const router = new express.Router();
 
 router.route('/api/v1/games')
-  .get((request, response) => {
-    games.fetch(request.query)
-      .then(result => response.send(result))
-      .catch(error => response.status(500).send({ error: error.message }));
-  })
-  .post((request, response) => {
-    games.create(new Game(request.body))
-      .then(result => response.send(result))
-      .catch(error => response.status(500).send({ error: error.message }));
-  });
+  .get((request, response) => games.fetch(request.query)
+    .then(result => response.send(result)))
+  .post((request, response) => games.create(new Game(request.body))
+    .then(result => response.send(result)));
 
-router.param('game_id', (request, response, next, id) => {
-  games.get(id)
-    .then((result) => {
-      request.game = result;
-      next();
-      return request.game;
-    })
-    .catch(error => response.status(500).send({ error: error.message }));
+router.param('game_id', async (request, response, next, id) => {
+  request.game = await games.get(id);
+  next();
 });
 
 router.route('/api/v1/games/:game_id')
@@ -34,30 +23,24 @@ router.route('/api/v1/games/:game_id')
     }
     return response.json(request.game);
   })
-  .patch((request, response) => {
+  .patch(async (request, response) => {
     if (isEmpty(request.game)) {
       return response.status(404).send();
     }
-    return games.update(request.game, request.body)
-      .then(result => response.json(result))
-      .catch(error => response.status(500).send({ error: error.message }));
+    const result = await games.update(request.game, request.body);
+    return response.json(result);
   });
 
 router.route('/api/v1/games/:game_id/judge')
-  .post((request, response) => {
-    if (isEmpty(request.game)) {
-      return response.status(404).send();
-    }
-
+  .post(async (request, response) => {
     const outcome = request.game.determineOutcome();
 
     if (outcome.state !== 'final') {
       return response.status(304).end();
     }
 
-    return games.update(request.game, outcome)
-      .then(result => response.json(result))
-      .catch(error => response.status(500).send({ error: error.message }));
+    const result = await games.update(request.game, outcome);
+    return response.json(result);
   });
 
 module.exports = router;
