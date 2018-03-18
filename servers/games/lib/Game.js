@@ -21,11 +21,11 @@ module.exports = class {
       playerWinnerId: null,
     };
 
-    if (!this.player1id && !this.player2id) {
+    if (isNull(this.player1id) || isNull(this.player2id)) {
       return outcome;
     }
 
-    if (!this.player1choice && !this.player2choice) {
+    if (isNull(this.player1choice) || isNull(this.player2choice)) {
       return outcome;
     }
 
