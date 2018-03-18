@@ -1,6 +1,6 @@
 const chai = require('chai');
 
-const Referee = require('../../../../servers/games/lib/Referee');
+const Referee = require('../../../../../servers/games/lib/Referee');
 
 const referee = new Referee();
 

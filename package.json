@@ -51,7 +51,9 @@
     "eslint-plugin-mocha": "^4.11.0",
     "eslint-plugin-promise": "^3.7.0",
     "mocha": "^5.0.4",
+    "mock-knex": "^0.4.0",
     "nyc": "^11.6.0",
-    "package-json-validator": "^0.6.3"
+    "package-json-validator": "^0.6.3",
+    "supertest": "^3.0.0"
   }
 }

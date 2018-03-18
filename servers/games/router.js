@@ -8,11 +8,11 @@ const router = new express.Router();
 router.route('/api/v1/games')
   .get(async (request, response) => {
     const game = await games.fetch(request.query);
-    response.send(game);
+    return response.json(game);
   })
   .post(async (request, response) => {
     const game = await games.create(new Game(request.body));
-    response.send(game);
+    return response.json(game);
   });
 
 router.param('game_id', async (request, response, next, id) => {

@@ -1,5 +1,5 @@
 const chai = require('chai');
-const validation = require('../../lib/validation');
+const validation = require('../../../lib/validation');
 
 const should = chai.should();
 
