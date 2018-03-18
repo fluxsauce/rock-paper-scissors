@@ -3,24 +3,33 @@ const express = require('express');
 const knex = require('../../../../lib/knex')(config);
 const mockKnex = require('mock-knex');
 const request = require('supertest');
-const router = require('../../../../servers/games/router');
+const proxyquire = require('proxyquire');
 const chai = require('chai');
 
 const should = chai.should();
 
 describe('games API', function () {
   let tracker;
-  const app = express();
-  app.use(express.json());
-  app.use(router);
+  let app;
+  let override;
 
   before(function (done) {
     mockKnex.mock(knex);
     tracker = mockKnex.getTracker();
+
+    override = { knex };
+    override.knex['@global'] = true;
+
     done();
   });
 
   beforeEach(function (done) {
+    app = express();
+    app.use(express.json());
+
+    const router = proxyquire('../../../../servers/games/router', override);
+
+    app.use(router);
     tracker.install();
     done();
   });

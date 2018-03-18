@@ -54,6 +54,7 @@
     "mock-knex": "^0.4.0",
     "nyc": "^11.6.0",
     "package-json-validator": "^0.6.3",
+    "proxyquire": "^2.0.0",
     "supertest": "^3.0.0"
   }
 }
