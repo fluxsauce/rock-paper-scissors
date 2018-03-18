@@ -4,6 +4,7 @@ const config = require('config');
 const knex = require('../../../../../lib/knex')(config);
 const mockKnex = require('mock-knex');
 const proxyquire = require('proxyquire');
+const Game = require('../../../../../servers/games/lib/Game');
 
 const should = chai.should();
 
@@ -48,6 +49,94 @@ describe('servers/games/lib/games.js', function () {
     done();
   });
 
+  context('fetch', function () {
+    it('should fetch all records', function () {
+      let bindings;
+
+      tracker.on('query', (query) => {
+        ({ bindings } = query);
+        query.response([]);
+      });
+
+      return games.fetch({})
+        .then((result) => {
+          bindings.length.should.equal(0);
+          return result;
+        });
+    });
+
+    it('should fetch records by state', function () {
+      let bindings;
+
+      tracker.on('query', (query) => {
+        ({ bindings } = query);
+        query.response([]);
+      });
+
+      return games.fetch({ state: 'final' })
+        .then((result) => {
+          bindings.length.should.equal(1);
+          bindings[0].should.equal('final');
+          return result;
+        });
+    });
+
+    it('should fetch records and limit', function () {
+      let bindings;
+
+      tracker.on('query', (query) => {
+        ({ bindings } = query);
+        query.response([]);
+      });
+
+      return games.fetch({ limit: 1 })
+        .then((result) => {
+          bindings.length.should.equal(1);
+          bindings[0].should.equal(1);
+          return result;
+        });
+    });
+
+    it('should fetch records and order in a direction', function () {
+      let bindings;
+      let sql;
+
+      tracker.on('query', (query) => {
+        ({ bindings, sql } = query);
+        query.response([]);
+      });
+
+      return games.fetch({ order: 'DESC' })
+        .then((result) => {
+          bindings.length.should.equal(0);
+          sql.should.contain('order by `id` DESC');
+          return result;
+        });
+    });
+  });
+
+
+  context('create', function () {
+    it('should create a record', function () {
+      let bindings;
+
+      tracker.on('query', (query) => {
+        ({ bindings } = query);
+        query.response([1234]);
+      });
+
+      return games.create(validGame)
+        .then((result) => {
+          const expected = new Game(validGame);
+          expected.id = 1234;
+          bindings.length.should.equal(8);
+          bindings[0].should.equal(1234);
+          result.should.deep.equal(expected);
+          return result;
+        });
+    });
+  });
+
   context('get', function () {
     it('should get a record', function () {
       let bindings;
@@ -79,6 +168,28 @@ describe('servers/games/lib/games.js', function () {
           bindings.length.should.equal(1);
           bindings[0].should.equal(1234);
           should.not.exist(result);
+          return result;
+        });
+    });
+  });
+
+  context('update', function () {
+    it('should update a record', function () {
+      let bindings;
+
+      tracker.on('query', (query) => {
+        ({ bindings } = query);
+        query.response([]);
+      });
+
+      return games.update(validGame, { player2choice: null, state: 'pending' })
+        .then((result) => {
+          const expected = new Game(validGame);
+          expected.player2choice = null;
+          expected.state = 'pending';
+
+          bindings.length.should.equal(9);
+          result.should.deep.equal(expected);
           return result;
         });
     });
