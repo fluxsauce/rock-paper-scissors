@@ -5,6 +5,7 @@ const mockKnex = require('mock-knex');
 const request = require('supertest');
 const proxyquire = require('proxyquire');
 const chai = require('chai');
+const Game = require('../../../../servers/games/lib/Game');
 
 const should = chai.should();
 
@@ -113,6 +114,93 @@ describe('games API', function () {
           .get('/api/v1/games/1')
           .expect('Content-Type', /json/)
           .expect(200, expected, done);
+      });
+    });
+
+    context('PATCH', function () {
+      it('should update a game', function (done) {
+        const existing = {
+          id: 1,
+          lastUpdated: '2018-03-17T20:33:36.000Z',
+          player1choice: null,
+          player1id: null,
+          player2choice: null,
+          player2id: null,
+          playerWinnerId: null,
+          state: 'pending',
+        };
+
+        const expected = new Game(existing);
+        expected.player1id = 2;
+        expected.lastUpdated = null;
+
+        tracker.on('query', query => query.response([existing]));
+
+        request(app)
+          .patch('/api/v1/games/1')
+          .send({ player1id: 2 })
+          .expect('Content-Type', /json/)
+          .expect((result) => {
+            const resultGame = new Game(result.body);
+            // Not dealing with fake timers.
+            resultGame.lastUpdated = null;
+            resultGame.should.deep.equal(expected);
+          })
+          .expect(200, done);
+      });
+    });
+  });
+
+  context('/api/v1/games/:game_id/judge', function () {
+    context('POST', function () {
+      it('should return a 304 for an incomplete game', function (done) {
+        tracker.on('query', query => query.response([{
+          id: 1,
+          lastUpdated: '2018-03-17T20:33:36.000Z',
+          player1choice: 'rock',
+          player1id: 1,
+          player2choice: null,
+          player2id: 2,
+          playerWinnerId: null,
+          state: 'pending',
+        }]));
+
+        request(app)
+          .post('/api/v1/games/1/judge')
+          .expect(304, '', done);
+      });
+
+      it('should determine the outcome and update a game that is ready to be judged', function (done) {
+        tracker.on('query', query => query.response([{
+          id: 1,
+          lastUpdated: '2018-03-17T20:33:36.000Z',
+          player1choice: 'rock',
+          player1id: 1,
+          player2choice: 'paper',
+          player2id: 2,
+          playerWinnerId: null,
+          state: 'pending',
+        }]));
+
+        request(app)
+          .post('/api/v1/games/1/judge')
+          .expect('Content-Type', /json/)
+          .expect((result) => {
+            const resultGame = new Game(result.body);
+            // Not dealing with fake timers.
+            resultGame.lastUpdated = null;
+            resultGame.should.deep.equal({
+              id: 1,
+              lastUpdated: null,
+              player1choice: 'rock',
+              player1id: 1,
+              player2choice: 'paper',
+              player2id: 2,
+              playerWinnerId: 2,
+              state: 'final',
+            });
+          })
+          .expect(200, done);
       });
     });
   });

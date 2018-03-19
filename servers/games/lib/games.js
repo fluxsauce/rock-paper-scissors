@@ -80,9 +80,8 @@ function update(original, raw) {
     .then((validated) => {
       game = validated;
 
-      return knex('games')
-        .where({ id: game.id })
-        .update(game);
+      return knex.update(game).from('games')
+        .where({ id: game.id });
     })
     .then(() => new Game(game));
 }
