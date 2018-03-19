@@ -54,7 +54,7 @@ function create(raw) {
  * @returns {Promise<Game>} Database result.
  */
 function get(id) {
-  return knex('games')
+  return knex.select().from('games')
     .where({ id })
     .select()
     .then((result) => {

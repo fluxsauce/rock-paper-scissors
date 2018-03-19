@@ -1,7 +1,6 @@
 const express = require('express');
 const games = require('./lib/games');
 const Game = require('./lib/Game');
-const isEmpty = require('lodash/isEmpty');
 
 const router = new express.Router();
 
@@ -21,16 +20,8 @@ router.param('game_id', async (request, response, next, id) => {
 });
 
 router.route('/api/v1/games/:game_id')
-  .get((request, response) => {
-    if (isEmpty(request.game)) {
-      return response.sendStatus(404);
-    }
-    return response.json(request.game);
-  })
+  .get((request, response) => response.json(request.game))
   .patch(async (request, response) => {
-    if (isEmpty(request.game)) {
-      return response.status(404).send();
-    }
     const result = await games.update(request.game, request.body);
     return response.json(result);
   });
