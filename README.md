@@ -64,6 +64,6 @@ Permanent (deletes database):
 # Stop and remove containers, networks, images and volumes.
 docker-compose down
 # Turn off PM2.
-./node_mobules/.bin/pm2 kill
+./node_modules/.bin/pm2 kill
 ```
 
