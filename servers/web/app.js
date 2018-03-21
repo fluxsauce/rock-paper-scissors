@@ -17,7 +17,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bootstrap/css', express.static('./node_modules/bootstrap/dist/css'));
 app.use('/bootstrap/js', express.static('./node_modules/bootstrap/dist/js'));
 app.use('/jquery/js', express.static('./node_modules/jquery/dist'));
-app.use('/popper/js', express.static('./node_modules/popper.js/dist/umd'));
 app.use('/socket/js', express.static('./node_modules/socket.io-client/dist'));
 
 app.use(session);
