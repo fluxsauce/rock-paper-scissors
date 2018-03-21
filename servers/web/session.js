@@ -5,7 +5,7 @@ const KnexSessionStore = require('connect-session-knex')(session);
 
 module.exports = session({
   store: new KnexSessionStore({ knex }),
-  secret: config.get('session.secret'),
+  secret: config.get('web.session.secret'),
   cookie: { maxAge: 7 * 24 * 60 * 60 * 1000 },
   resave: true,
   saveUninitialized: true,
