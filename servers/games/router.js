@@ -1,8 +1,14 @@
 const express = require('express');
 const games = require('./lib/games');
 const Game = require('./lib/Game');
+const Referee = require('./lib/Referee');
+
+const referee = new Referee();
 
 const router = new express.Router();
+
+router.route('/api/v1/rules')
+  .get((request, response) => response.json(referee.rules()));
 
 router.route('/api/v1/games')
   .get(async (request, response) => {

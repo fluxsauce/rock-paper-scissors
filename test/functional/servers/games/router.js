@@ -45,6 +45,21 @@ describe('games API', function () {
     done();
   });
 
+  context('/api/v1/rules', function () {
+    context('GET', function () {
+      it('should return an array of rules', function (done) {
+        request(app)
+          .get('/api/v1/rules')
+          .expect('Content-Type', /json/)
+          .expect(200, [
+            'rock breaks scissors',
+            'paper covers rock',
+            'scissors cuts paper',
+          ], done);
+      });
+    });
+  });
+
   context('/api/v1/games', function () {
     context('GET', function () {
       it('should return all games', function (done) {

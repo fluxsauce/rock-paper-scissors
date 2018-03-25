@@ -2,9 +2,7 @@ const config = require('./config');
 const express = require('express');
 const isNull = require('lodash/isNull');
 const gamesClient = require('./lib/gamesClient')(config.games);
-const Referee = require('../games/lib/Referee');
 
-const referee = new Referee();
 const router = new express.Router();
 
 router.param('game_id', async (request, response, next, id) => {
@@ -18,7 +16,9 @@ router.route('/games')
     .then(result => response.redirect(`/games/${result.body.id}`)));
 
 router.route('/games/:game_id')
-  .get((request, response) => {
+  .get(async (request, response) => {
+    const { body: rules } = await gamesClient.rules();
+
     const messages = [];
     if (request.session.message) {
       messages.push(request.session.message);
@@ -29,7 +29,7 @@ router.route('/games/:game_id')
       title: `Game #${request.game.id}`,
       viewerPlayerId: request.session.playerId,
       game: request.game,
-      rules: referee.rules(),
+      rules,
       messages,
     });
   });

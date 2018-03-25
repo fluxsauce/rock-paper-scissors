@@ -72,11 +72,24 @@ module.exports = (config) => {
     });
   }
 
+  /**
+   * Get the game rules.
+   *
+   * @returns {Promise<Array>} Collection of rules.
+   */
+  function rules() {
+    return httpClient({
+      uri: `${config.protocol}://${config.host}:${config.port}/api/v1/rules`,
+      method: 'GET',
+    });
+  }
+
   return {
     create,
     get,
     fetch,
     update,
     judge,
+    rules,
   };
 };

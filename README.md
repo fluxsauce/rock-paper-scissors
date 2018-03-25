@@ -35,6 +35,7 @@ docker-compose up -d
 Using [HTTPie](https://httpie.org/), a command-line HTTP client.
 
 ```bash
+http GET :5005/api/v1/rules
 http POST :5010/api/v1/players
 http GET :5010/api/v1/players/1
 http POST :5010/api/v1/players
