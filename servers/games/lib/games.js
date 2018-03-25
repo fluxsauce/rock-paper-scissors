@@ -5,26 +5,6 @@ const Game = require('./Game');
 const validation = require('../../../lib/validation');
 
 /**
- * Fetch games.
- *
- * @param {Object} criteria - criteria for filtering results.
- * @returns {Promise<*>} Database result.
- */
-function fetch(criteria) {
-  const query = knex.select().from('games');
-  if (criteria.state) {
-    query.where('state', criteria.state);
-  }
-  if (criteria.limit) {
-    query.limit(criteria.limit);
-  }
-  if (criteria.order) {
-    query.orderBy('id', criteria.order);
-  }
-  return query;
-}
-
-/**
  * Create a game.
  *
  * @param {Object} raw - game to be created.
@@ -35,7 +15,7 @@ function create(raw) {
 
   return validation.Game.validate(raw)
     .then((validated) => {
-      game = validated;
+      game = new Game(validated);
 
       return knex
         .insert(game)
@@ -43,7 +23,7 @@ function create(raw) {
     })
     .then((result) => {
       game.id = result.pop();
-      return new Game(game);
+      return game;
     });
 }
 
@@ -66,6 +46,26 @@ function get(id) {
 }
 
 /**
+ * Fetch games.
+ *
+ * @param {Object} criteria - criteria for filtering results.
+ * @returns {Promise<*>} Database result.
+ */
+function fetch(criteria) {
+  const query = knex.select().from('games');
+  if (criteria.state) {
+    query.where('state', criteria.state);
+  }
+  if (criteria.limit) {
+    query.limit(criteria.limit);
+  }
+  if (criteria.order) {
+    query.orderBy('id', criteria.order);
+  }
+  return query;
+}
+
+/**
  * Update a game.
  *
  * @param {Game} original - the game to be updated.
@@ -78,17 +78,17 @@ function update(original, raw) {
 
   return validation.Game.validate(game)
     .then((validated) => {
-      game = validated;
+      game = new Game(validated);
 
       return knex.update(game).from('games')
         .where({ id: game.id });
     })
-    .then(() => new Game(game));
+    .then(() => game);
 }
 
 module.exports = {
-  fetch,
   create,
   get,
+  fetch,
   update,
 };

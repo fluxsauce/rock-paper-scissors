@@ -10,12 +10,19 @@ const Player = require('./Player');
  * @returns {Promise<Player>} Player populated with an id.
  */
 function create(raw) {
+  let player;
+
   return validation.Player.validate(raw)
-    .then(validated => knex.insert(validated)
-      .into('players'))
+    .then((validated) => {
+      player = new Player(validated);
+
+      return knex
+        .insert(validated)
+        .into('players');
+    })
     .then((result) => {
-      raw.id = result.pop();
-      return new Player(raw);
+      player.id = result.pop();
+      return player;
     });
 }
 
