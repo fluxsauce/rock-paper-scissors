@@ -2,41 +2,14 @@ const config = require('config');
 const express = require('express');
 const isNull = require('lodash/isNull');
 const gamesClient = require('../../lib/gamesClient')(config);
-const playersClient = require('../../lib/playersClient')(config);
 const Referee = require('../games/lib/Referee');
 
 const referee = new Referee();
 const router = new express.Router();
 
-/**
- * Decorate a game with players, if any.
- *
- * @param {Game} game - target.
- * @returns {Promise<Game>} with property players
- */
-function getPlayers(game) {
-  game.players = {};
-  const promises = [];
-  if (!isNull(game.player1id)) {
-    promises.push(playersClient.get(game.player1id).then(result => result.body));
-  }
-  if (!isNull(game.player2id)) {
-    promises.push(playersClient.get(game.player2id).then(result => result.body));
-  }
-  return Promise.all(promises)
-    .then((players) => {
-      players.forEach((player) => {
-        if (player.id) {
-          game.players[player.id] = player;
-        }
-      });
-      return game;
-    });
-}
-
 router.param('game_id', async (request, response, next, id) => {
   const result = await gamesClient.get(id);
-  request.game = await getPlayers(result.body);
+  request.game = result.body;
   next();
 });
 
@@ -113,10 +86,7 @@ router.route('/')
     ]).then(([pendingFetch, finalFetch]) => [
       pendingFetch.body,
       finalFetch.body,
-    ]).then(([pending, final]) => Promise.all([
-      Promise.all(pending.map(game => getPlayers(game))),
-      Promise.all(final.map(game => getPlayers(game))),
-    ])).then(([pending, final]) => response.render('index', {
+    ]).then(([pending, final]) => response.render('index', {
       title: 'Home',
       pending,
       final,

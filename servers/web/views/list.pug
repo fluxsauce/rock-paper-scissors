@@ -9,7 +9,7 @@ mixin list(games)
           small
             | #{game.state}
             if (game.playerWinnerId)
-              |  - #{game.players[game.playerWinnerId].name} won!
+              |  - ##{game.playerWinnerId} won!
             else if (game.state === 'final')
               |  - Tied
-        p.mb1 #{game.player1id ? game.players[game.player1id].name : 'TBD'} vs. #{game.player2id ? game.players[game.player2id].name : 'TBD'}
+        p.mb1 #{game.player1id ? '#' + game.player1id : 'TBD'} vs. #{game.player2id ? '#' + game.player2id : 'TBD'}

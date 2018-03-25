@@ -28,7 +28,6 @@
   "homepage": "https://gitlab.com/fluxsauce/rock-paper-scissors#README",
   "dependencies": {
     "bootstrap": "^4.0.0",
-    "chance": "^1.0.13",
     "config": "^1.29.4",
     "connect-session-knex": "^1.4.0",
     "express": "^4.16.3",

@@ -28,7 +28,6 @@ app.use(async (request, response, next) => {
   }
   const result = await playersClient.create();
   request.session.playerId = result.body.id;
-  request.session.playerName = result.body.name;
   return next();
 });
 

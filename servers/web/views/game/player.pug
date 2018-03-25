@@ -1,7 +1,7 @@
 include choice
 
-mixin player(gameId, gameState, playerWinnerId, playerId, playerName, playerChoice, viewerPlayerId)
+mixin player(gameId, gameState, playerWinnerId, playerId, playerChoice, viewerPlayerId)
   tr(class=playerWinnerId && playerWinnerId === playerid ? 'table-success' : '')
-    th(scope='col') ##{playerId} - #{playerName} #{viewerPlayerId===playerId ? '(you)' : ''}
+    th(scope='col') ##{playerId}#{viewerPlayerId===playerId ? ' (you)' : ''}
     td
       +choice(playerId, playerChoice, gameId, viewerPlayerId, gameState)

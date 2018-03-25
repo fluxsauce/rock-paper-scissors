@@ -81,7 +81,6 @@ describe('lib/validation.js', function () {
     it('should accept valid input', function (done) {
       const input = {
         lastUpdated: new Date(),
-        name: 'Portok',
       };
       const result = validation.Player.validate(input);
 
@@ -125,26 +124,6 @@ describe('lib/validation.js', function () {
 
       result.error.should.be.an('error');
       result.error.message.should.include('"value" must be one of');
-
-      done();
-    });
-  });
-
-  context('playerName', function () {
-    it('should accept valid input', function (done) {
-      const result = validation.playerName.validate('Portok');
-
-      result.value.should.equal('Portok');
-      should.not.exist(result.error);
-
-      done();
-    });
-
-    it('should reject invalid input', function (done) {
-      const result = validation.playerName.validate({});
-
-      result.error.should.be.an('error');
-      result.error.message.should.include('"value" must be a string');
 
       done();
     });
