@@ -24,15 +24,9 @@ const Game = Joi.object({
   playerWinnerId: id.optional().allow(null),
 }).options({ abortEarly: false, stripUnknown: true });
 
-const Player = Joi.object({
-  id: id.optional().allow(null),
-  lastUpdated: Joi.date().required().raw(),
-}).options({ abortEarly: false, stripUnknown: true });
-
 module.exports = {
   Game,
   gameState,
   id,
-  Player,
   playerChoice,
 };

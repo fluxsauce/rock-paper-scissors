@@ -31,9 +31,9 @@ describe('servers/games/lib/Referee.js', function () {
     it('should render rules as an array of X beats Y', function (done) {
       const result = referee.rules();
       result.should.deep.equal([
-        'rock beats scissors',
-        'paper beats rock',
-        'scissors beats paper',
+        'rock breaks scissors',
+        'paper covers rock',
+        'scissors cuts paper',
       ]);
       done();
     });

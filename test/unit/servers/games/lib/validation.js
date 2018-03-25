@@ -1,9 +1,9 @@
 const chai = require('chai');
-const validation = require('../../../lib/validation');
+const validation = require('../../../../../servers/games/lib/validation');
 
 const should = chai.should();
 
-describe('lib/validation.js', function () {
+describe('servers/games/lib/validation.js', function () {
   context('Game', function () {
     it('should accept valid input', function (done) {
       const input = {
@@ -77,37 +77,6 @@ describe('lib/validation.js', function () {
     });
   });
 
-  context('Player', function () {
-    it('should accept valid input', function (done) {
-      const input = {
-        lastUpdated: new Date(),
-      };
-      const result = validation.Player.validate(input);
-
-      result.value.should.deep.equal(input);
-      should.not.exist(result.error);
-
-      done();
-    });
-
-    it('should reject a string', function (done) {
-      const result = validation.Player.validate('pants');
-
-      result.error.should.be.an('error');
-      result.error.message.should.include('"value" must be an object');
-
-      done();
-    });
-
-    it('should reject invalid input', function (done) {
-      const result = validation.Player.validate({});
-
-      result.error.should.be.an('error');
-      result.error.message.should.include('child "lastUpdated" fails because');
-
-      done();
-    });
-  });
 
   context('playerChoice', function () {
     it('should accept valid input', function (done) {

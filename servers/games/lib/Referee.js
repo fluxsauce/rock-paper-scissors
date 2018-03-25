@@ -4,9 +4,9 @@ module.exports = class {
   constructor() {
     this.training = {};
 
-    this.train('rock', 'scissors');
-    this.train('paper', 'rock');
-    this.train('scissors', 'paper');
+    this.train('rock', 'scissors', 'breaks');
+    this.train('paper', 'rock', 'covers');
+    this.train('scissors', 'paper', 'cuts');
   }
 
   judge(choice1, choice2) {
@@ -14,20 +14,20 @@ module.exports = class {
       return null;
     }
 
-    return this.training[choice1][choice2] === true;
+    return typeof this.training[choice1][choice2] !== 'undefined';
   }
 
-  train(winner, loser) {
+  train(winner, loser, verb) {
     this.training[winner] = {};
-    this.training[winner][loser] = true;
+    this.training[winner][loser] = verb;
   }
 
   rules() {
     const rules = [];
 
     forEach(this.training, (rule, winner) => {
-      forEach(rule, (boolean, loser) => {
-        rules.push(`${winner} beats ${loser}`);
+      forEach(rule, (verb, loser) => {
+        rules.push(`${winner} ${verb} ${loser}`);
       });
     });
 

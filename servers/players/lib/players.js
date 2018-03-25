@@ -1,6 +1,6 @@
 const config = require('../config');
 const knex = require('knex')(config.database);
-const validation = require('../../../lib/validation');
+const validation = require('./validation');
 const Player = require('./Player');
 
 /**

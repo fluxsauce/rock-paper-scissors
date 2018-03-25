@@ -70,9 +70,9 @@ router.route('/games/:game_id/judge')
     if (isNull(game.playerWinnerId) && game.state === 'final') {
       request.session.message = { level: 'warning', body: 'You have tied.' };
     } else if (game.playerWinnerId === request.session.playerId) {
-      request.session.message = { level: 'success', body: 'You have succeeded.' };
+      request.session.message = { level: 'success', body: 'You have succeeded!' };
     } else {
-      request.session.message = { level: 'danger', body: 'You were defeated.' };
+      request.session.message = { level: 'danger', body: 'You were defeated!' };
     }
 
     return response.redirect(`/games/${game.id}`);
