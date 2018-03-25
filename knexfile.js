@@ -1,5 +1,5 @@
-const config = require('config');
+const config = require('./servers/web/config');
 
 module.exports = {
-  development: config.get('database'),
+  development: config.database,
 };

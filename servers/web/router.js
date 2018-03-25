@@ -1,7 +1,7 @@
-const config = require('config');
+const config = require('./config');
 const express = require('express');
 const isNull = require('lodash/isNull');
-const gamesClient = require('../../lib/gamesClient')(config);
+const gamesClient = require('./lib/gamesClient')(config.games);
 const Referee = require('../games/lib/Referee');
 
 const referee = new Referee();

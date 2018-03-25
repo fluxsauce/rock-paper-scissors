@@ -9,7 +9,7 @@ module.exports = (config) => {
    */
   function create(player1id) {
     return httpClient({
-      uri: `http://localhost:${config.get('games.port')}/api/v1/games`,
+      uri: `${config.protocol}://${config.host}:${config.port}/api/v1/games`,
       method: 'POST',
       body: {
         player1id,
@@ -25,20 +25,20 @@ module.exports = (config) => {
    */
   function get(id) {
     return httpClient({
-      uri: `http://localhost:${config.get('games.port')}/api/v1/games/${id}`,
+      uri: `${config.protocol}://${config.host}:${config.port}/api/v1/games/${id}`,
       method: 'GET',
     });
   }
 
   /**
-   * Fetch games.
+   * Fetch config.
    *
    * @param {Object} criteria - criteria for filtering results.
    * @returns {Promise<Array.<Game>>} Games matching criteria.
    */
   function fetch(criteria) {
     return httpClient({
-      uri: `http://localhost:${config.get('games.port')}/api/v1/games`,
+      uri: `${config.protocol}://${config.host}:${config.port}/api/v1/games`,
       method: 'GET',
       qs: criteria,
     });
@@ -53,7 +53,7 @@ module.exports = (config) => {
    */
   function update(id, body) {
     return httpClient({
-      uri: `http://localhost:${config.get('games.port')}/api/v1/games/${id}`,
+      uri: `${config.protocol}://${config.host}:${config.port}/api/v1/games/${id}`,
       method: 'PATCH',
       body,
     });
@@ -67,7 +67,7 @@ module.exports = (config) => {
    */
   function judge(id) {
     return httpClient({
-      uri: `http://localhost:${config.get('games.port')}/api/v1/games/${id}/judge`,
+      uri: `${config.protocol}://${config.host}:${config.port}/api/v1/games/${id}/judge`,
       method: 'POST',
     });
   }

@@ -1,7 +1,7 @@
 const chai = require('chai');
 
-const config = require('config');
-const knex = require('../../../../../lib/knex')(config);
+const config = require('../../../../../servers/games/config');
+const knex = require('knex')(config.database);
 const mockKnex = require('mock-knex');
 const proxyquire = require('proxyquire');
 const Game = require('../../../../../servers/games/lib/Game');
@@ -28,7 +28,7 @@ describe('servers/games/lib/games.js', function () {
     tracker = mockKnex.getTracker();
 
     games = proxyquire('../../../../../servers/games/lib/games', {
-      '../../../lib/knex': () => knex,
+      knex: () => knex,
     });
 
     done();

@@ -9,6 +9,7 @@ module.exports = {
     instance_var: 'INSTANCE_ID',
     env: {
       NODE_ENV: 'development',
+      NODE_PATH: path.resolve(__dirname, './node_modules'),
     },
   })),
 };

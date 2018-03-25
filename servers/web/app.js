@@ -1,6 +1,6 @@
-const config = require('config');
+const config = require('./config');
 const express = require('express');
-const playersClient = require('../../lib/playersClient')(config);
+const playersClient = require('./lib/playersClient')(config.players);
 const path = require('path');
 const session = require('./session');
 
@@ -14,11 +14,10 @@ app.use(express.urlencoded({
 }));
 
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/bootstrap/css', express.static('./node_modules/bootstrap/dist/css'));
-app.use('/bootstrap/js', express.static('./node_modules/bootstrap/dist/js'));
-app.use('/jquery/js', express.static('./node_modules/jquery/dist'));
-app.use('/popper/js', express.static('./node_modules/popper.js/dist/umd'));
-app.use('/socket/js', express.static('./node_modules/socket.io-client/dist'));
+app.use('/bootstrap/css', express.static(path.join(process.env.NODE_PATH, '/bootstrap/dist/css')));
+app.use('/bootstrap/js', express.static(path.join(process.env.NODE_PATH, '/bootstrap/dist/js')));
+app.use('/jquery/js', express.static(path.join(process.env.NODE_PATH, '/jquery/dist')));
+app.use('/popper/js', express.static(path.join(process.env.NODE_PATH, '/popper.js/dist/umd')));
 
 app.use(session);
 

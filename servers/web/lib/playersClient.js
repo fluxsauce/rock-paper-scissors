@@ -8,7 +8,7 @@ module.exports = (config) => {
    */
   function create() {
     return httpClient({
-      uri: `http://localhost:${config.get('players.port')}/api/v1/players`,
+      uri: `${config.protocol}://${config.host}:${config.port}/api/v1/players`,
       method: 'POST',
     });
   }
@@ -21,7 +21,7 @@ module.exports = (config) => {
    */
   function get(id) {
     return httpClient({
-      uri: `http://localhost:${config.get('players.port')}/api/v1/players/${id}`,
+      uri: `${config.protocol}://${config.host}:${config.port}/api/v1/players/${id}`,
       method: 'GET',
     });
   }
