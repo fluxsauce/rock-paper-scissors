@@ -49,7 +49,7 @@ function get(id) {
  * Fetch games.
  *
  * @param {Object} criteria - criteria for filtering results.
- * @returns {Promise<*>} Database result.
+ * @returns {Promise<Array<Object>>} Database result.
  */
 function fetch(criteria) {
   const query = knex.select().from('games');
@@ -70,7 +70,7 @@ function fetch(criteria) {
  *
  * @param {Game} original - the game to be updated.
  * @param {Object} raw - fields to update.
- * @returns {Promise<*>} Database result.
+ * @returns {Promise<Game>} Updated game.
  */
 function update(original, raw) {
   let game = merge(original, raw);

@@ -7,9 +7,6 @@ const referee = new Referee();
 
 const router = new express.Router();
 
-router.route('/api/v1/rules')
-  .get((request, response) => response.json(referee.rules()));
-
 router.route('/api/v1/games')
   .get(async (request, response) => {
     const game = await games.fetch(request.query);
@@ -43,5 +40,8 @@ router.route('/api/v1/games/:game_id/judge')
     const result = await games.update(request.game, outcome);
     return response.json(result);
   });
+
+router.route('/api/v1/rules')
+  .get((request, response) => response.json(referee.rules()));
 
 module.exports = router;

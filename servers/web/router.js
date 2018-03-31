@@ -5,15 +5,29 @@ const gamesClient = require('./lib/gamesClient')(config.games);
 
 const router = new express.Router();
 
+router.route('/')
+  .get((request, response) =>
+    Promise.all([
+      gamesClient.fetch({ state: 'pending', limit: 3, order: 'asc' }),
+      gamesClient.fetch({ state: 'final', limit: 3, order: 'desc' }),
+    ]).then(([pendingFetch, finalFetch]) => [
+      pendingFetch.body,
+      finalFetch.body,
+    ]).then(([pending, final]) => response.render('index', {
+      title: 'Home',
+      pending,
+      final,
+    })));
+
+router.route('/games')
+  .post((request, response) => gamesClient.create(request.session.playerId)
+    .then(result => response.redirect(`/games/${result.body.id}`)));
+
 router.param('game_id', async (request, response, next, id) => {
   const result = await gamesClient.get(id);
   request.game = result.body;
   next();
 });
-
-router.route('/games')
-  .post((request, response) => gamesClient.create(request.session.playerId)
-    .then(result => response.redirect(`/games/${result.body.id}`)));
 
 router.route('/games/:game_id')
   .get(async (request, response) => {
@@ -77,19 +91,5 @@ router.route('/games/:game_id/judge')
 
     return response.redirect(`/games/${game.id}`);
   });
-
-router.route('/')
-  .get((request, response) =>
-    Promise.all([
-      gamesClient.fetch({ state: 'pending', limit: 3, order: 'asc' }),
-      gamesClient.fetch({ state: 'final', limit: 3, order: 'desc' }),
-    ]).then(([pendingFetch, finalFetch]) => [
-      pendingFetch.body,
-      finalFetch.body,
-    ]).then(([pending, final]) => response.render('index', {
-      title: 'Home',
-      pending,
-      final,
-    })));
 
 module.exports = router;
