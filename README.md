@@ -13,7 +13,7 @@ docker-compose up -d
 # Create the MySQL schemas.
 ./node_modules/.bin/knex migrate:latest
 # Start PM2
-./node_modules/.bin/pm2 start ./pm2.config.js
+pm2 start ./pm2.config.js
 ```
 
 ## Web
@@ -56,7 +56,7 @@ Temporary:
 # Stop services.
 docker-compose stop
 # Turn off PM2.
-./node_mobules/.bin/pm2 kill
+pm2 kill
 ```
 
 Permanent (deletes database):
@@ -65,6 +65,6 @@ Permanent (deletes database):
 # Stop and remove containers, networks, images and volumes.
 docker-compose down
 # Turn off PM2.
-./node_modules/.bin/pm2 kill
+pm2 kill
 ```
 

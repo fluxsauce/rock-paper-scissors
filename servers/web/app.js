@@ -13,6 +13,11 @@ app.use(express.urlencoded({
   extended: true,
 }));
 
+// Specify node_modules location if not set from environment variables.
+if (!('NODE_PATH' in process.env)) {
+  process.env.NODE_PATH = path.resolve(__dirname, '../../node_modules');
+}
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/bootstrap/css', express.static(path.join(process.env.NODE_PATH, '/bootstrap/dist/css')));
 app.use('/bootstrap/js', express.static(path.join(process.env.NODE_PATH, '/bootstrap/dist/js')));
