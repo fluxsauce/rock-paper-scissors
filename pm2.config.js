@@ -5,7 +5,7 @@ module.exports = {
     name,
     cwd: path.resolve(__dirname, `./servers/${name}`),
     script: './index.js',
-    watch: true,
+    watch: ['.', '../shared'],
     instance_var: 'INSTANCE_ID',
     env: {
       NODE_ENV: 'development',
