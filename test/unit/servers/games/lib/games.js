@@ -1,11 +1,11 @@
 const chai = require('chai');
-
-const config = require('../../../../../servers/games/config');
-const knex = require('knex')(config.database);
+const Knex = require('knex');
 const mockKnex = require('mock-knex');
 const proxyquire = require('proxyquire');
+const config = require('../../../../../servers/games/config');
 const Game = require('../../../../../servers/games/lib/Game');
 
+const knex = Knex(config.database);
 const should = chai.should();
 
 describe('servers/games/lib/games.js', function () {

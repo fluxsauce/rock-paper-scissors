@@ -11,9 +11,9 @@ npm i
 # Start docker, which provides a MySQL database.
 docker-compose up -d
 # Create the MySQL schemas.
-./node_modules/.bin/knex migrate:latest
+npx knex migrate:latest
 # Start PM2
-./node_modules/.bin/pm2 start ./pm2.config.js
+npx pm2 start ./pm2.config.js
 ```
 
 ## Web
@@ -65,6 +65,6 @@ Permanent (deletes database):
 # Stop and remove containers, networks, images and volumes.
 docker-compose down
 # Turn off PM2.
-./node_modules/.bin/pm2 kill
+npx pm2 kill
 ```
 

@@ -43,7 +43,7 @@ body {
 }
 
 .cover-container {
-  width: 42em;
+  max-width: 42em;
 }
 
 
@@ -109,11 +109,15 @@ body {
   color: rgba(255, 255, 255, .5);
 }
 
-/**
-  Custom
+/*
+ * Custom
  */
 
 .pending,
 .final {
   padding-bottom: 1em;
+}
+
+th {
+  color: #ddd;
 }

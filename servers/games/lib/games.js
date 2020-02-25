@@ -1,6 +1,5 @@
-const config = require('../config');
-const knex = require('knex')(config.database);
 const merge = require('lodash/merge');
+const knex = require('knex')((require('../config').database));
 const Game = require('./Game');
 const validation = require('./validation');
 

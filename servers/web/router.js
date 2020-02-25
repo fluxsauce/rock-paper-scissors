@@ -1,28 +1,27 @@
-const config = require('./config');
 const express = require('express');
 const isNull = require('lodash/isNull');
+const config = require('./config');
 const gamesClient = require('./lib/gamesClient')(config.games);
 const logger = require('../shared/logger');
 
 const router = new express.Router();
 
 router.route('/')
-  .get((request, response) =>
-    Promise.all([
-      gamesClient.fetch({ state: 'pending', limit: 3, order: 'asc' }),
-      gamesClient.fetch({ state: 'final', limit: 3, order: 'desc' }),
-    ]).then(([pendingFetch, finalFetch]) => [
-      pendingFetch.body,
-      finalFetch.body,
-    ]).then(([pending, final]) => response.render('index', {
-      title: 'Home',
-      pending,
-      final,
-    })));
+  .get((request, response) => Promise.all([
+    gamesClient.fetch({ state: 'pending', limit: 3, order: 'asc' }),
+    gamesClient.fetch({ state: 'final', limit: 3, order: 'desc' }),
+  ]).then(([pendingFetch, finalFetch]) => [
+    pendingFetch.body,
+    finalFetch.body,
+  ]).then(([pending, final]) => response.render('index', {
+    title: 'Home',
+    pending,
+    final,
+  })));
 
 router.route('/games')
   .post((request, response) => gamesClient.create(request.session.playerId)
-    .then(result => response.redirect(`/games/${result.body.id}`)));
+    .then((result) => response.redirect(`/games/${result.body.id}`)));
 
 router.param('game_id', async (request, response, next, id) => {
   const timer = logger.startTimer();

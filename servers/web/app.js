@@ -1,17 +1,14 @@
-const config = require('./config');
 const express = require('express');
-const playersClient = require('./lib/playersClient')(config.players);
+const expressRequestId = require('express-request-id')();
 const path = require('path');
+const playersClient = require('./lib/playersClient')(require('./config').players);
 const session = require('./session');
-
 const logger = require('../shared/logger');
 const requestLogger = require('../shared/requestLogger');
-const expressRequestId = require('express-request-id')();
 
 const app = express();
 
 app.set('x-powered-by', false);
-
 app.use(express.json());
 app.use(express.urlencoded({
   extended: true,
@@ -59,7 +56,7 @@ app.use((error, request, response, next) => {
   if (response.headersSent) {
     return next(error);
   }
-  console.error(error);
+  logger.error(error, request.session.playerId, request.session.id);
   return response.status(500).render('500', {
     title: '500',
   });

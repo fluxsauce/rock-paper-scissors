@@ -1,7 +1,9 @@
-const config = require('./config');
-const knex = require('knex')(config.database);
+const Knex = require('knex');
 const session = require('express-session');
 const KnexSessionStore = require('connect-session-knex')(session);
+const config = require('./config');
+
+const knex = Knex(config.database);
 
 module.exports = session({
   store: new KnexSessionStore({ knex }),

@@ -1,4 +1,4 @@
-module.exports.up = knex => knex.schema.hasTable('players').then((exists) => {
+module.exports.up = (knex) => knex.schema.hasTable('players').then((exists) => {
   if (!exists) {
     return knex.schema.createTable('players', (table) => {
       table.increments('id').unsigned().primary();

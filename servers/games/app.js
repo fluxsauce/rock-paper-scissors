@@ -1,6 +1,6 @@
 const express = require('express');
-const requestLogger = require('../shared/requestLogger');
 const expressRequestId = require('express-request-id')();
+const requestLogger = require('../shared/requestLogger');
 
 const app = express();
 

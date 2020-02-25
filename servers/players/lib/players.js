@@ -1,5 +1,4 @@
-const config = require('../config');
-const knex = require('knex')(config.database);
+const knex = require('knex')(require('../config').database);
 const validation = require('./validation');
 const Player = require('./Player');
 
