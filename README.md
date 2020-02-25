@@ -56,7 +56,7 @@ Temporary:
 # Stop services.
 docker-compose stop
 # Turn off PM2.
-./node_mobules/.bin/pm2 kill
+npx pm2 kill
 ```
 
 Permanent (deletes database):
